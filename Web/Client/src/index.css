@@ -1,0 +1,534 @@
+@import url("https://fonts.googleapis.com/css2?family=Cookie&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+body {
+  background: url("./Resources/layered-waves-haikei-2.svg");
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: black;
+}
+
+#accountModal,
+#musicModal {
+  /* From https://css.glass */
+  background: rgba(222, 210, 210, 0);
+  border-radius: 10px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4.9px);
+  -webkit-backdrop-filter: blur(4.9px);
+  border: 1px solid rgba(222, 210, 210, 0.25);
+  width: 450px;
+  height: 450px;
+  padding: 10px;
+  margin: auto;
+  position: relative;
+  top: 200px;
+  font-family: Roboto, sans-serif;
+}
+#accountModal #switch,
+#musicModal #switch {
+  width: 300px;
+  display: flex;
+  justify-content: space-around;
+  position: relative;
+  top: 30px;
+}
+#accountModal #switch #underliner,
+#musicModal #switch #underliner {
+  position: absolute;
+  width: 40px;
+  height: 2px;
+  background-color: black;
+  left: 51.5px;
+  bottom: 0;
+}
+#accountModal #login,
+#accountModal #signup,
+#musicModal #login,
+#musicModal #signup {
+  display: none;
+  position: relative;
+  top: 100px;
+  line-height: 30px;
+  padding-left: 50px;
+}
+#accountModal #login #pass i,
+#accountModal #signup #pass i,
+#musicModal #login #pass i,
+#musicModal #signup #pass i {
+  position: relative;
+  bottom: 10px;
+  right: 20px;
+}
+#accountModal #login label,
+#accountModal #signup label,
+#musicModal #login label,
+#musicModal #signup label {
+  font-size: small;
+}
+#accountModal #login input,
+#accountModal #signup input,
+#musicModal #login input,
+#musicModal #signup input {
+  border-bottom: 1px solid black;
+  margin-bottom: 30px;
+  width: 300px;
+  caret-color: black;
+}
+#accountModal #login input:focus,
+#accountModal #signup input:focus,
+#musicModal #login input:focus,
+#musicModal #signup input:focus {
+  outline: none;
+}
+#accountModal #login button,
+#accountModal #signup button,
+#musicModal #login button,
+#musicModal #signup button {
+  border: 1px solid black;
+  border-radius: 20px;
+  padding: 10px;
+  width: 120px;
+  position: relative;
+  top: 20px;
+  left: 100px;
+  transition: color 0.5s ease-in-out, background-color 0.5s ease-in-out;
+}
+#accountModal #login button:hover,
+#accountModal #signup button:hover,
+#musicModal #login button:hover,
+#musicModal #signup button:hover {
+  cursor: pointer;
+  color: white;
+  background-color: black;
+}
+
+#musicModal #switch {
+  width: 100%;
+}
+#musicModal #switch #underliner {
+  width: 81px;
+  left: 63px;
+}
+#musicModal #custom,
+#musicModal #current {
+  display: none;
+  position: relative;
+  top: 70px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#musicModal #custom #audio1,
+#musicModal #custom #customlist #music1,
+#musicModal #current #audio1,
+#musicModal #current #customlist #music1 {
+  width: 300px;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid black;
+  padding-bottom: 10px;
+}
+#musicModal #custom #audio1 #commands,
+#musicModal #custom #customlist #music1 #commands,
+#musicModal #current #audio1 #commands,
+#musicModal #current #customlist #music1 #commands {
+  display: flex;
+  justify-content: space-around;
+  width: 100px;
+}
+#musicModal #current {
+  display: none;
+}
+#musicModal #custom #addition {
+  text-align: center;
+}
+#musicModal #custom #customlist {
+  margin-top: 10px;
+}
+
+#sidebar {
+  position: fixed;
+  width: 75px;
+  height: 98%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+#sidebar div {
+  /* From https://css.glass */
+  background: rgba(222, 210, 210, 0);
+  border-radius: 10px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4.9px);
+  -webkit-backdrop-filter: blur(4.9px);
+  border: 1px solid rgba(222, 210, 210, 0.25);
+  text-align: center;
+  position: relative;
+  left: 12.5px;
+}
+#sidebar div button {
+  padding: 15px;
+  font-size: 20px;
+  border: none;
+  background: transparent;
+}
+#sidebar #navigation {
+  width: 75px;
+  position: relative;
+  top: 320px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+#sidebar #settings {
+  width: 75px;
+  position: relative;
+  bottom: 20px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#navbar {
+  /* From https://css.glass */
+  background: rgba(222, 210, 210, 0);
+  border-radius: 10px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4.9px);
+  -webkit-backdrop-filter: blur(4.9px);
+  border: 1px solid rgba(222, 210, 210, 0.25);
+  position: fixed;
+  top: 8px;
+  left: 17px;
+  width: 98%;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#navbar div:first-of-type {
+  margin-left: 50px;
+}
+#navbar div:nth-of-type(2) {
+  /* From https://css.glass */
+  background: rgba(222, 210, 210, 0);
+  border-radius: 10px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4.9px);
+  -webkit-backdrop-filter: blur(4.9px);
+  border: 1px solid rgba(222, 210, 210, 0.25);
+  width: 200px;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+}
+#navbar div:last-of-type {
+  margin-right: 50px;
+}
+
+#dashboard {
+  /* From https://css.glass */
+  background: rgba(222, 210, 210, 0);
+  border-radius: 10px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4.9px);
+  -webkit-backdrop-filter: blur(4.9px);
+  border: 1px solid rgba(222, 210, 210, 0.25);
+  position: fixed;
+  top: 80px;
+  left: 100px;
+  width: 92%;
+  height: 90vh;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-around;
+  display: none;
+}
+#dashboard div {
+  border-radius: 10px;
+  width: 630px;
+  height: 380px;
+}
+#dashboard div h1 {
+  font-family: Cookie, sans-serif;
+  font-size: 30px;
+  margin-left: 15px;
+  text-decoration: underline;
+}
+#dashboard div #graph {
+  all: revert;
+}
+#dashboard div #summarydetails {
+  all: revert;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 80%;
+}
+#dashboard div #summarydetails div {
+  all: revert;
+  text-align: center;
+}
+#dashboard div #summarydetails div i {
+  font-size: 70px;
+}
+#dashboard div #summarydetails div p {
+  position: relative;
+  top: 20px;
+  margin-bottom: 10px;
+}
+#dashboard div #records {
+  width: 550px;
+  height: 200px;
+  margin: auto;
+  position: relative;
+  top: 20px;
+  text-align: center;
+}
+#dashboard div #records #clips {
+  border: 1px solid black;
+  all: revert;
+  position: relative;
+  top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#dashboard div #records #clips div {
+  all: revert;
+  width: 400px;
+  border-left: 1px solid black;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 10px;
+  margin-bottom: 20px;
+}
+#dashboard div #records #clips div #audio {
+  border: none;
+  width: 200px;
+  align-self: center;
+  position: relative;
+  top: 5px;
+}
+#dashboard div #musicdesc {
+  margin: auto;
+  width: 400px;
+  height: 200px;
+  text-align: center;
+  position: relative;
+  top: 0px;
+}
+#dashboard div #musicdesc p {
+  position: relative;
+  top: 13px;
+  font-family: "Poppins", sans-serif;
+  text-decoration: underline;
+}
+#dashboard div #musicdesc img {
+  width: 100%;
+  height: 225px;
+  border-radius: 20px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  margin: auto;
+  border: 1px solid black;
+}
+#dashboard div #audio {
+  all: revert;
+  width: 275px;
+  height: 25px;
+  margin: auto;
+  position: relative;
+  top: 70px;
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+}
+#dashboard div #options {
+  width: 50px;
+  height: 150px;
+  position: relative;
+  bottom: 200px;
+  left: 525px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  border-right: 1px solid black;
+  border-radius: 0px;
+}
+
+#timetab {
+  /* From https://css.glass */
+  background: rgba(222, 210, 210, 0);
+  border-radius: 10px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4.9px);
+  -webkit-backdrop-filter: blur(4.9px);
+  border: 1px solid rgba(222, 210, 210, 0.3);
+  position: fixed;
+  top: 80px;
+  left: 100px;
+  width: 92%;
+  height: 90vh;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 10px;
+}
+#timetab #timer, #timetab #tasks, #timetab #musictab {
+  padding: 10px;
+  border-radius: 5px;
+  width: 95%;
+  height: 100%;
+}
+#timetab #timer {
+  /* From https://css.glass */
+  background: rgba(222, 210, 210, 0);
+  border-radius: 10px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4.9px);
+  -webkit-backdrop-filter: blur(4.9px);
+  border: 1px solid rgba(222, 210, 210, 0.25);
+  grid-row: 1/4;
+}
+#timetab #tasks {
+  /* From https://css.glass */
+  background: rgba(222, 210, 210, 0);
+  border-radius: 10px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4.9px);
+  -webkit-backdrop-filter: blur(4.9px);
+  border: 1px solid rgba(222, 210, 210, 0.25);
+  grid-column: 2/3;
+  grid-row: 1/3;
+}
+#timetab #musictab {
+  border: 1px solid black;
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.87 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.87 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}/*# sourceMappingURL=index.css.map */
