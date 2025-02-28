@@ -490,6 +490,7 @@ body {
     }
   }
 }
+//Time Tab
 #timetab {
   @include elements();
   position: fixed;
@@ -664,6 +665,7 @@ body {
   }
 }
 
+//Tailwind Css Configs
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
