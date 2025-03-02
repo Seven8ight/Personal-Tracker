@@ -1,6 +1,6 @@
 import { useTabSwitcher } from "./Contexts/TabSwitcher";
 import { useModalOpener, type currentmodal } from "./Contexts/ModalHandler";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const Sidebar = (): React.ReactNode => {
   const { setter } = useTabSwitcher(),
@@ -10,10 +10,6 @@ const Sidebar = (): React.ReactNode => {
       setter2(targetModal);
     },
     [muted, setMuted] = useState<boolean>(false);
-
-  useEffect(() => {
-    let audio;
-  }, [muted]);
 
   return (
     <div id="sidebar">
