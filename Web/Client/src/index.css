@@ -44,6 +44,7 @@ body {
   background-color: black;
   left: 51.5px;
   bottom: 0;
+  transition: transform 0.5s ease-in-out;
 }
 #accountModal #login,
 #accountModal #signup,
@@ -82,7 +83,7 @@ body {
 #settingsModal #login input,
 #settingsModal #signup input {
   border-bottom: 1px solid black;
-  margin-bottom: 30px;
+  margin-bottom: 15px;
   width: 300px;
   caret-color: black;
 }
@@ -204,11 +205,15 @@ body {
   text-decoration: underline;
   font-family: "Cookie";
 }
+#settingsModal div:first-of-type #form {
+  position: relative;
+  left: 75px;
+}
 #settingsModal div:first-of-type button {
   display: block;
   margin: auto;
   position: relative;
-  right: 10px;
+  right: 95px;
   padding: 7px;
   transition: color 0.5s ease-in-out;
 }
@@ -293,6 +298,9 @@ body {
   border: none;
   background: transparent;
 }
+#sidebar div button:hover {
+  cursor: pointer;
+}
 #sidebar #navigation {
   width: 75px;
   position: relative;
@@ -328,6 +336,9 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+#navbar button:hover {
+  cursor: pointer;
 }
 #navbar div:first-of-type {
   margin-left: 50px;
@@ -366,7 +377,6 @@ body {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-around;
-  display: none;
 }
 #dashboard div {
   border-radius: 10px;
@@ -403,14 +413,43 @@ body {
 }
 #dashboard div #records {
   width: 550px;
-  height: 200px;
+  height: 270px;
+  overflow: scroll;
   margin: auto;
   position: relative;
   top: 20px;
   text-align: center;
 }
+#dashboard div #records #addRecord {
+  all: revert;
+  margin: 20px;
+}
+#dashboard div #records #addRecord input {
+  text-align: center;
+  font-family: "Lobster Two", sans-serif;
+  caret-color: black;
+  border-bottom: 1px solid black;
+  margin-right: 10px;
+}
+#dashboard div #records #addRecord input:focus {
+  outline: none;
+}
+#dashboard div #records #addRecord input::-moz-placeholder {
+  font-family: "Lobster Two", sans-serif;
+  text-align: center;
+}
+#dashboard div #records #addRecord input::placeholder {
+  font-family: "Lobster Two", sans-serif;
+  text-align: center;
+}
+#dashboard div #records #addRecord button {
+  font-family: "Lobster Two", sans-serif;
+  padding: 10px;
+}
+#dashboard div #records #addRecord button:hover {
+  cursor: pointer;
+}
 #dashboard div #records #clips {
-  border: 1px solid black;
   all: revert;
   position: relative;
   top: 20px;
@@ -421,7 +460,6 @@ body {
 #dashboard div #records #clips div {
   all: revert;
   width: 400px;
-  border-left: 1px solid black;
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -434,6 +472,13 @@ body {
   align-self: center;
   position: relative;
   top: 5px;
+  /* From https://css.glass */
+  background: rgba(222, 210, 210, 0);
+  border-radius: 10px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4.9px);
+  -webkit-backdrop-filter: blur(4.9px);
+  padding: 4px;
 }
 #dashboard div #musicdesc {
   margin: auto;
@@ -490,7 +535,6 @@ body {
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
   backdrop-filter: blur(4.9px);
   -webkit-backdrop-filter: blur(4.9px);
-  border: 1px solid rgba(222, 210, 210, 0.3);
   position: fixed;
   top: 80px;
   left: 100px;
@@ -515,14 +559,20 @@ body {
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
   backdrop-filter: blur(4.9px);
   -webkit-backdrop-filter: blur(4.9px);
-  border: 1px solid rgba(222, 210, 210, 0.3);
-  width: 200px;
+  width: 450px;
   height: auto;
   padding: 10px;
   text-align: center;
   position: absolute;
   bottom: 50px;
-  left: 33%;
+  left: 11.5%;
+}
+#timetab #quotes p:first-of-type {
+  font-family: "Cookie", sans-serif;
+  font-size: 18px;
+}
+#timetab #quotes p:last-of-type {
+  font-family: "Dancing Script", sans-serif;
 }
 #timetab #timer {
   /* From https://css.glass */
@@ -586,6 +636,11 @@ body {
   border-bottom: 1px solid black;
   margin-right: 30px;
   font-family: "Lobster Two";
+  caret-color: black;
+  text-align: center;
+}
+#timetab #tasks #add input:focus {
+  outline: none;
 }
 #timetab #tasks #add input::-moz-placeholder {
   text-align: center;
@@ -628,8 +683,7 @@ body {
 }
 #timetab #musictab #banner {
   position: relative;
-  top: 25px;
-  border: 1px solid black;
+  top: 30px;
   border-radius: 25px;
 }
 #timetab #musictab #banner:hover #innerControls {

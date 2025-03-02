@@ -1,9 +1,37 @@
+import { useEffect, useState } from "react";
+
+type option = "Signup" | "Login";
+
 const Account = (): React.ReactNode => {
+  const [tab, setTab] = useState<option>("Login"),
+    tabHandler = (Tab: option) => {
+      setTab(Tab);
+    };
+
+  useEffect(() => {
+    const loginTab = document.querySelector<HTMLDivElement>("#login"),
+      signupTab = document.querySelector<HTMLDivElement>("#signup"),
+      underliner = document.querySelector<HTMLDivElement>(
+        "#accountModal #switch #underliner"
+      );
+    if (loginTab && signupTab && underliner) {
+      if (tab == "Login") {
+        signupTab.style.display = "none";
+        loginTab.style.display = "block";
+        underliner.style.transform = "translateX(0px)";
+      } else {
+        signupTab.style.display = "block";
+        loginTab.style.display = "none";
+        underliner.style.transform = "translateX(149.5px)";
+      }
+    }
+  }, [tab]);
+  console.log(tab);
   return (
     <div id="accountModal">
       <div id="switch">
-        <button>Login</button>
-        <button>Sign Up</button>
+        <button onClick={() => tabHandler("Login")}>Login</button>
+        <button onClick={() => tabHandler("Signup")}>Sign Up</button>
         <div id="underliner"></div>
       </div>
       <form id="login">

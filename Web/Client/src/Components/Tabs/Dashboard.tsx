@@ -1,7 +1,18 @@
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { ChartContainer, ChartConfig } from "../ui/chart";
 import { Bar, BarChart, XAxis } from "recharts";
+import { useMusicPlayer } from "../Contexts/MusicHandler";
+import { usePhotos } from "../Contexts/PicturesHandler";
+
+type audio = {
+  id: number;
+  name: string;
+  audio: string;
+  playing: boolean;
+};
 
 const Dashboard = (): React.ReactNode => {
+  //Summary
   const chartData = [
     { month: "January", day: "Monday", desktop: 186, mobile: 80 },
     { month: "February", day: "Tuesday", desktop: 305, mobile: 200 },
@@ -23,6 +34,147 @@ const Dashboard = (): React.ReactNode => {
     },
   } satisfies ChartConfig;
 
+  //Audio-Recordings
+  const [audioTapes, setTapes] = useState<audio[]>([]),
+    [recording, setRecording] = useState<boolean>(false),
+    [currentClip, setClip] = useState<number>(0),
+    [clipName, setName] = useState<string>(""),
+    inputRef = useRef<HTMLInputElement | null>(null),
+    audioCapture: Blob[] = [];
+
+  useEffect(() => {
+    let mediaRecorder: MediaRecorder | null = null,
+      stream: MediaStream | null = null,
+      tapeId = audioTapes.length + 1;
+
+    const startRecording = async () => {
+        if ((inputRef.current as HTMLInputElement).value.length > 0) {
+          stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: false,
+          });
+          mediaRecorder = new MediaRecorder(stream);
+
+          mediaRecorder.start();
+
+          mediaRecorder.onstart = () => {
+            playHandler(false);
+            if (mediaRecorder)
+              mediaRecorder.ondataavailable = (event: BlobEvent) => {
+                audioCapture.push(event.data);
+              };
+          };
+
+          mediaRecorder.onstop = () => {
+            console.log(audioCapture);
+            const audioFile: Blob = new Blob(audioCapture, {
+                type: "audio/mp4",
+              }),
+              audioReader: FileReader = new FileReader();
+
+            audioReader.onloadend = () => {
+              console.log(audioReader.result);
+
+              const audioBaseSrc = audioReader.result as string;
+
+              setTapes((tapes) => [
+                ...tapes,
+                {
+                  id: tapeId,
+                  name: clipName,
+                  audio: audioBaseSrc,
+                  playing: false,
+                },
+              ]);
+            };
+
+            audioReader.readAsDataURL(audioFile);
+          };
+        } else
+          (inputRef.current as HTMLInputElement).placeholder =
+            "Enter a value first";
+      },
+      stopRecording = async () => {
+        if (mediaRecorder) {
+          mediaRecorder.stop();
+        }
+      };
+
+    if (recording) startRecording();
+    else stopRecording();
+
+    return () => {
+      if (mediaRecorder && mediaRecorder.state == "recording")
+        mediaRecorder.stop();
+      if (stream) stream.getTracks().forEach((track) => track.stop());
+    };
+  }, [recording]);
+
+  const audioHandler = (id: number): void => {
+      let audioElement = document.querySelector<HTMLAudioElement>(
+          `#tape-${id} audio`
+        ),
+        audioTape = audioTapes.find((tape) => tape.id == id) as audio;
+
+      if (audioElement && audioTape) {
+        if (audioTape.playing) {
+          audioElement.pause();
+          audioTape.playing = false;
+        } else {
+          audioElement.play();
+          audioTape.playing = true;
+          playHandler(false);
+        }
+      }
+
+      setTapes((tapes) =>
+        [...tapes].map((tape) => {
+          if (tape.id == id) return audioTape;
+          return tape;
+        })
+      );
+      setClip(id);
+    },
+    clipHandler = (type: "next" | "previous"): void => {
+      if (type == "next") {
+        if (currentClip + 1 == audioTapes.length)
+          setClip((current) => current + 1);
+        else setClip(0);
+      } else {
+        if (currentClip - 1 < 0) setClip(0);
+      }
+    },
+    deleteClip = (id: number): void => {
+      setTapes((tapes) => tapes.filter((tape) => tape.id != id));
+    };
+
+  //Music Handler
+  const {
+    audioRef,
+    total,
+    index,
+    indexHandler,
+    playing,
+    playHandler,
+    timeHandler,
+  } = useMusicPlayer();
+
+  const nextPreviousHandler = (action: "Next" | "Back") => {
+    if (action == "Next") {
+      if (index + 1 == total) indexHandler(0);
+      else indexHandler((current) => current + 1);
+      timeHandler(0);
+    } else {
+      if (index - 1 < 0) indexHandler(total - 1);
+      else indexHandler((current) => current - 1);
+      timeHandler(0);
+    }
+  };
+
+  //Photos
+  const photos = usePhotos(),
+    photo = photos?.photos[4];
+
   return (
     <div id="dashboard">
       <div id="summary" className="shadow-2xl p-5">
@@ -36,7 +188,7 @@ const Dashboard = (): React.ReactNode => {
           <div id="timetaken">
             <i className="fa-solid fa-clock-rotate-left"></i>
             <p>Time taken</p>
-            <p>5Hrs so far</p>
+            <p>5 hrs so far</p>
           </div>
         </div>
       </div>
@@ -64,63 +216,81 @@ const Dashboard = (): React.ReactNode => {
         <audio src="#"></audio>
         <div id="records">
           <p>Provide notes in form of audio recordings</p>
+          <div id="addRecord">
+            <input
+              value={clipName}
+              type="text"
+              placeholder="Name"
+              onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                setName(event.target.value)
+              }
+              ref={inputRef}
+            />
+            <button onClick={() => setRecording(!recording)}>
+              {recording == false ? "Start Recording" : "Stop Recording"}
+            </button>
+          </div>
           <div id="clips">
-            <div>
-              <audio src="#"></audio>
-              <p>Clip 1</p>
-              <div id="audio">
-                <button>
-                  <i className="fa-solid fa-backward-step"></i>
-                </button>
-                <button>
-                  <i className="fa-solid fa-play"></i>
-                </button>
-                <button>
-                  <i className="fa-solid fa-forward-step"></i>
-                </button>
+            {audioTapes.length > 0 &&
+              audioTapes.map((tape) => (
+                <div id={`tape-${tape.id}`} key={tape.id}>
+                  <audio src={tape.audio}></audio>
+                  <p>{tape.name}</p>
+                  <div id="audio">
+                    <button onClick={() => clipHandler("previous")}>
+                      <i className="fa-solid fa-backward-step"></i>
+                    </button>
+                    <button onClick={() => audioHandler(tape.id)}>
+                      {tape.playing && <i className="fa-solid fa-pause"></i>}
+                      {!tape.playing && <i className="fa-solid fa-play"></i>}
+                    </button>
+                    <button onClick={() => clipHandler("next")}>
+                      <i className="fa-solid fa-forward-step"></i>
+                    </button>
+                    <button onClick={() => deleteClip(tape.id)}>
+                      <i className="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            {audioTapes.length == 0 && (
+              <div>
+                <p className="font-[Cookie] text-2xl">No Recordings Added</p>
               </div>
-            </div>
-            <div>
-              <audio src="#"></audio>
-              <p>Clip 2</p>
-              <div id="audio">
-                <button>
-                  <i className="fa-solid fa-backward-step"></i>
-                </button>
-                <button>
-                  <i className="fa-solid fa-play"></i>
-                </button>
-                <button>
-                  <i className="fa-solid fa-forward-step"></i>
-                </button>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
       <div id="music" className="shadow-2xl p-5">
         <h1>Music</h1>
-        <audio id="audioelement" src="#"></audio>
         <div id="musicdesc">
-          <img
-            src="https://media.istockphoto.com/id/1464130407/vector/lofi-illustration-room-line-grain-purple-colors-lo-fi-work-place-bedroom-window-guitar.jpg?s=612x612&w=0&k=20&c=X8qo3ykb-CZOIxx2XFuoMJcEQqTfxicuLyZrHF3haps="
-            alt="music banner"
-          />
-          <p>Lofi beats by Lorenzo</p>
+          <img src={photo?.src.original} alt="music banner" />
+          <p>
+            <a href={photo?.photographer_url}>{photo?.photographer}</a>
+          </p>
         </div>
         <div id="audio">
-          <button>
+          <button onClick={() => nextPreviousHandler("Back")}>
             <i className="fa-solid fa-backward-step"></i>
           </button>
-          <button>
-            <i className="fa-solid fa-play"></i>
+          <button
+            onClick={() => {
+              playHandler(!playing);
+              if (audioRef?.current.currentTime)
+                timeHandler(audioRef.current.currentTime);
+            }}
+          >
+            {playing == false && <i className="fa-solid fa-play"></i>}
+            {playing == true && <i className="fa-solid fa-pause"></i>}
           </button>
           <button>
-            <i className="fa-solid fa-forward-step"></i>
+            <i
+              className="fa-solid fa-forward-step"
+              onClick={() => nextPreviousHandler("Next")}
+            ></i>
           </button>
         </div>
         <div id="options">
-          <i className="fa-solid fa-plus"></i>
           <i className="fa-solid fa-shuffle"></i>
           <i className="fa-solid fa-dice"></i>
         </div>

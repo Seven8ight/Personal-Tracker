@@ -24,7 +24,7 @@ body {
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
   backdrop-filter: blur(4.9px);
   -webkit-backdrop-filter: blur(4.9px);
-  border: 1px solid rgba(222, 210, 210, 0.3);
+  // border: 1px solid rgba(222, 210, 210, 0.3);
 }
 //Modals
 #accountModal,
@@ -53,6 +53,7 @@ body {
       background-color: black;
       left: 51.5px;
       bottom: 0;
+      transition: transform 0.5s ease-in-out;
     }
   }
 
@@ -78,7 +79,7 @@ body {
 
     & input {
       border-bottom: 1px solid black;
-      margin-bottom: 30px;
+      margin-bottom: 15px;
       width: 300px;
       caret-color: black;
 
@@ -197,12 +198,17 @@ body {
       font-family: "Cookie";
     }
 
+    & #form {
+      position: relative;
+      left: 75px;
+    }
+
     & button {
       display: block;
       margin: auto;
 
       position: relative;
-      right: 10px;
+      right: 95px;
       padding: 7px;
       transition: color 0.5s ease-in-out;
 
@@ -294,6 +300,10 @@ body {
       font-size: 20px;
       border: none;
       background: transparent;
+
+      &:hover {
+        cursor: pointer;
+      }
     }
   }
 
@@ -330,6 +340,10 @@ body {
   justify-content: space-between;
   align-items: center;
 
+  & button:hover {
+    cursor: pointer;
+  }
+
   & div:first-of-type {
     margin-left: 50px;
   }
@@ -357,7 +371,6 @@ body {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-around;
-  display: none;
 
   & div {
     border-radius: 10px;
@@ -401,15 +414,44 @@ body {
 
     #records {
       width: 550px;
-      height: 200px;
-
+      height: 270px;
+      overflow: scroll;
       margin: auto;
       position: relative;
       top: 20px;
       text-align: center;
 
+      & #addRecord {
+        all: revert;
+        margin: 20px;
+
+        & input {
+          text-align: center;
+          font-family: "Lobster Two", sans-serif;
+          caret-color: black;
+          border-bottom: 1px solid black;
+          margin-right: 10px;
+
+          &:focus {
+            outline: none;
+          }
+
+          &::placeholder {
+            font-family: "Lobster Two", sans-serif;
+            text-align: center;
+          }
+        }
+
+        & button {
+          font-family: "Lobster Two", sans-serif;
+          padding: 10px;
+          &:hover {
+            cursor: pointer;
+          }
+        }
+      }
+
       #clips {
-        border: 1px solid black;
         all: revert;
         position: relative;
         top: 20px;
@@ -420,7 +462,7 @@ body {
         & div {
           all: revert;
           width: 400px;
-          border-left: 1px solid black;
+
           display: flex;
           justify-content: space-around;
           align-items: center;
@@ -433,6 +475,9 @@ body {
             align-self: center;
             position: relative;
             top: 5px;
+            @include elements();
+
+            padding: 4px;
           }
         }
       }
@@ -515,13 +560,21 @@ body {
 
   & #quotes {
     @include elements();
-    width: 200px;
+    width: 450px;
     height: auto;
     padding: 10px;
     text-align: center;
     position: absolute;
     bottom: 50px;
-    left: 33%;
+    left: 11.5%;
+
+    & p:first-of-type {
+      font-family: "Cookie", sans-serif;
+      font-size: 18px;
+    }
+    & p:last-of-type {
+      font-family: "Dancing Script", sans-serif;
+    }
   }
 
   & #timer {
@@ -581,6 +634,12 @@ body {
         border-bottom: 1px solid black;
         margin-right: 30px;
         font-family: "Lobster Two";
+        caret-color: black;
+        text-align: center;
+
+        &:focus {
+          outline: none;
+        }
 
         &::placeholder {
           text-align: center;
@@ -623,8 +682,7 @@ body {
   & #musictab {
     & #banner {
       position: relative;
-      top: 25px;
-      border: 1px solid black;
+      top: 30px;
       border-radius: 25px;
 
       &:hover #innerControls {

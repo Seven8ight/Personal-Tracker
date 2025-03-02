@@ -1,0 +1,66 @@
+import { createContext, memo, useContext, useEffect, useState } from "react";
+import { createClient } from "pexels";
+
+type photos = {
+  next_page: string;
+  page: number;
+  per_page: number;
+  photos: photo[];
+  total_results: 747;
+};
+type photo = {
+  alt: string;
+  photographer: string;
+  photographer_url: string;
+  src: {
+    original: string;
+    small: string;
+    medium: string;
+    large: string;
+  };
+  url: string;
+};
+
+const Images = createContext<photos | null>(null),
+  client = createClient(
+    "0tOAdsHjY29NMWloE9V2YQdbg017o4n2Fm7wHcw0hQ3R8hws2OeqL1lk"
+  ),
+  query = "retro";
+
+export const usePhotos = () => {
+  const photos = useContext(Images);
+  return photos;
+};
+
+const PictureHandler = ({
+  children,
+}: {
+  children: React.ReactNode;
+}): React.ReactNode => {
+  const [photos, setPhotos] = useState<photos | any>();
+
+  useEffect(() => {
+    const photoFetcher = async () => {
+      try {
+        let gallery: photos | any = await client.photos.search({
+          query,
+          per_page: 10,
+        });
+
+        return gallery;
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    const caller = async () => {
+      const photos: photos | any = await photoFetcher();
+      setPhotos(photos);
+    };
+    caller();
+  }, []);
+
+  return <Images value={photos}>{children}</Images>;
+};
+
+const PicturesHandler = memo(PictureHandler);
+export default PicturesHandler;

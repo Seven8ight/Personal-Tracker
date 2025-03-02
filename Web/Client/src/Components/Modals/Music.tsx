@@ -1,9 +1,43 @@
+import { useState, useEffect } from "react";
+
+type option = "Currentplaylist" | "CustomList";
+
 const Music = (): React.ReactNode => {
+  const [tab, setTab] = useState<option>("CustomList"),
+    tabHandler = (Tab: option) => {
+      setTab(Tab);
+    };
+
+  useEffect(() => {
+    const customTab = document.querySelector<HTMLDivElement>(
+        "#musicModal #custom"
+      ),
+      currentPlaylistTab = document.querySelector<HTMLDivElement>(
+        "#musicModal #current"
+      ),
+      underliner = document.querySelector<HTMLDivElement>(
+        "#musicModal #switch #underliner"
+      );
+
+    if (customTab && currentPlaylistTab && underliner) {
+      if (tab == "Currentplaylist") {
+        currentPlaylistTab.style.display = "block";
+        customTab.style.display = "none";
+        underliner.style.transform = "translateX(212.5px)";
+      } else {
+        customTab.style.display = "block";
+        currentPlaylistTab.style.display = "none";
+        underliner.style.transform = "translateX(00px)";
+      }
+    }
+  }, [tab]);
   return (
     <div id="musicModal">
       <div id="switch">
-        <button>Custom List</button>
-        <button>Current Playlist</button>
+        <button onClick={() => tabHandler("CustomList")}>Custom List</button>
+        <button onClick={() => tabHandler("Currentplaylist")}>
+          Current Playlist
+        </button>
         <div id="underliner"></div>
       </div>
       <div id="custom">

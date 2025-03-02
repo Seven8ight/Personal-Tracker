@@ -1,22 +1,63 @@
+import { useTimes } from "../Contexts/PomodoroSettings";
+
+type settings = "focus" | "longBreak" | "shortBreak";
+
 const Settings = (): React.ReactNode => {
+  const { defaults, setSettings } = useTimes(),
+    settingsHandler = (setting: settings, value: number) => {
+      if (setting == "focus")
+        setSettings({
+          ...defaults,
+          [setting]: value,
+        });
+      else if (setting == "longBreak")
+        setSettings({
+          ...defaults,
+          [setting]: value,
+        });
+      else
+        setSettings({
+          ...defaults,
+          [setting]: value,
+        });
+    };
+
   return (
     <div id="settingsModal">
       <h1>Settings</h1>
       <div id="pomodoro">
         <h2>Pomodoro Settings</h2>
-        <label>Focus Time</label>
-        <br />
-        <input type="number" placeholder="25" />
-        <br />
-        <label>Short Break</label>
-        <br />
-        <input type="number" placeholder="5" />
-        <br />
-        <label>Long Break</label>
-        <br />
-        <input type="number" placeholder="15" />
-        <br />
-        <button>Submit</button>
+        <div id="form">
+          <label>Focus Time</label>
+          <br />
+          <input
+            type="number"
+            placeholder={String(defaults.focus)}
+            onChange={(event) =>
+              settingsHandler("focus", Number(event.target.value))
+            }
+          />
+          <br />
+          <label>Short Break</label>
+          <br />
+          <input
+            type="number"
+            placeholder={String(defaults.shortBreak)}
+            onChange={(event) =>
+              settingsHandler("shortBreak", Number(event.target.value))
+            }
+          />
+          <br />
+          <label>Long Break</label>
+          <br />
+          <input
+            type="number"
+            placeholder={String(defaults.longBreak)}
+            onChange={(event) =>
+              settingsHandler("longBreak", Number(event.target.value))
+            }
+          />
+        </div>
       </div>
       <hr />
       <div id="background">
