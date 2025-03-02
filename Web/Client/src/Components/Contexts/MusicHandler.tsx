@@ -97,6 +97,10 @@ const MusicHandler = ({
     };
   }, [index, playing, currentTime]);
 
+  setInterval(() => {
+    if (audioRef.current.ended) setIndex((index) => index + 1);
+  }, 1000);
+
   return (
     <MusicPlayer.Provider
       value={{
