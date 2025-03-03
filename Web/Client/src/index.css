@@ -169,7 +169,7 @@ body {
 #settingsModal {
   height: auto;
   width: 600px;
-  top: 125px;
+  top: 100px;
 }
 #settingsModal h1 {
   font-family: "Lobster Two", sans-serif;
@@ -717,6 +717,61 @@ body {
   align-items: center;
   position: relative;
   left: 147.5px;
+}
+
+#Error,
+#Loader {
+  /* From https://css.glass */
+  background: rgba(222, 210, 210, 0);
+  border-radius: 10px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4.9px);
+  -webkit-backdrop-filter: blur(4.9px);
+  border: 1px solid rgba(222, 210, 210, 0.25);
+  text-align: center;
+  width: 400px;
+  height: auto;
+  padding: 10px;
+  z-index: 999;
+  margin: auto;
+  position: relative;
+  top: 400px;
+  line-height: 50px;
+}
+#Error h1,
+#Loader h1 {
+  font-family: "Cookie", sans-serif;
+  font-size: 30px;
+  text-decoration: underline;
+}
+#Error p,
+#Loader p {
+  font-size: small;
+  font-family: "Roboto", sans-serif;
+}
+#Error button,
+#Loader button {
+  border-radius: 10px;
+  border: 1px solid black;
+  width: 100px;
+  transition: color 0.5s ease-in-out, background-color 0.5s ease-in-out;
+}
+#Error button:hover,
+#Loader button:hover {
+  cursor: pointer;
+  background-color: rgb(47, 34, 34);
+  color: white;
+}
+
+#Error {
+  box-shadow: 10px 5px 15px 0px rgb(199, 18, 18);
+}
+
+#Loader {
+  top: 420px;
+}
+#Loader h1 {
+  text-decoration: none;
 }
 
 :root {

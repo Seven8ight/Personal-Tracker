@@ -3,6 +3,7 @@ import { ChartContainer, ChartConfig } from "../ui/chart";
 import { Bar, BarChart, XAxis } from "recharts";
 import { useMusicPlayer } from "../Contexts/MusicHandler";
 import { usePhotos } from "../Contexts/PicturesHandler";
+import Error from "../Popups/Error";
 
 type audio = {
   id: number;
@@ -48,51 +49,64 @@ const Dashboard = (): React.ReactNode => {
       tapeId = audioTapes.length + 1;
 
     const startRecording = async () => {
-        if ((inputRef.current as HTMLInputElement).value.length > 0) {
-          stream = await navigator.mediaDevices.getUserMedia({
-            audio: true,
-            video: false,
-          });
-          mediaRecorder = new MediaRecorder(stream);
+        try {
+          if ((inputRef.current as HTMLInputElement).value.length > 0) {
+            stream = await navigator.mediaDevices.getUserMedia({
+              audio: true,
+              video: false,
+            });
+            mediaRecorder = new MediaRecorder(stream);
 
-          mediaRecorder.start();
+            mediaRecorder.start();
 
-          mediaRecorder.onstart = () => {
-            playHandler(false);
-            if (mediaRecorder)
-              mediaRecorder.ondataavailable = (event: BlobEvent) => {
-                audioCapture.push(event.data);
-              };
-          };
-
-          mediaRecorder.onstop = () => {
-            console.log(audioCapture);
-            const audioFile: Blob = new Blob(audioCapture, {
-                type: "audio/mp4",
-              }),
-              audioReader: FileReader = new FileReader();
-
-            audioReader.onloadend = () => {
-              console.log(audioReader.result);
-
-              const audioBaseSrc = audioReader.result as string;
-
-              setTapes((tapes) => [
-                ...tapes,
-                {
-                  id: tapeId,
-                  name: clipName,
-                  audio: audioBaseSrc,
-                  playing: false,
-                },
-              ]);
+            mediaRecorder.onstart = () => {
+              playHandler(false);
+              if (mediaRecorder)
+                mediaRecorder.ondataavailable = (event: BlobEvent) => {
+                  audioCapture.push(event.data);
+                };
             };
 
-            audioReader.readAsDataURL(audioFile);
-          };
-        } else
-          (inputRef.current as HTMLInputElement).placeholder =
-            "Enter a value first";
+            mediaRecorder.onstop = () => {
+              console.log(audioCapture);
+              const audioFile: Blob = new Blob(audioCapture, {
+                  type: "audio/mp4",
+                }),
+                audioReader: FileReader = new FileReader();
+
+              audioReader.onloadend = () => {
+                console.log(audioReader.result);
+
+                const audioBaseSrc = audioReader.result as string;
+
+                setTapes((tapes) => [
+                  ...tapes,
+                  {
+                    id: tapeId,
+                    name: clipName,
+                    audio: audioBaseSrc,
+                    playing: false,
+                  },
+                ]);
+              };
+
+              audioReader.readAsDataURL(audioFile);
+            };
+          } else
+            (inputRef.current as HTMLInputElement).placeholder =
+              "Enter a value first";
+        } catch (error) {
+          if (
+            error ==
+            "NotAllowedError: The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission."
+          ) {
+            console.log("Not allowed");
+            <Error type="Rejected Media" />;
+            setRecording(false);
+          } else {
+            console.log(error);
+          }
+        }
       },
       stopRecording = async () => {
         if (mediaRecorder) {

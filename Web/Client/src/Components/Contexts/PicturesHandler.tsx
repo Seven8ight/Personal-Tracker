@@ -1,5 +1,7 @@
 import { createContext, memo, useContext, useEffect, useState } from "react";
 import { createClient } from "pexels";
+import Loading from "../Popups/Loading";
+import Error from "../Popups/Error";
 
 type photos = {
   next_page: string;
@@ -37,10 +39,11 @@ const PictureHandler = ({
 }: {
   children: React.ReactNode;
 }): React.ReactNode => {
-  const [photos, setPhotos] = useState<photos | any>();
+  const [photos, setPhotos] = useState<photos | any>(),
+    [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
-    const photoFetcher = async () => {
+    const photoFetcher = async (): Promise<any | photos> => {
       try {
         let gallery: photos | any = await client.photos.search({
           query,
@@ -49,7 +52,7 @@ const PictureHandler = ({
 
         return gallery;
       } catch (error) {
-        console.error(error);
+        setError(true);
       }
     };
     const caller = async () => {
@@ -59,7 +62,13 @@ const PictureHandler = ({
     caller();
   }, []);
 
-  return <Images value={photos}>{children}</Images>;
+  return (
+    <Images value={photos}>
+      {children}
+      {typeof photos == "undefined" && error != true && <Loading />}
+      {error && <Error type="Photo request invalid" />}
+    </Images>
+  );
 };
 
 const PicturesHandler = memo(PictureHandler);
