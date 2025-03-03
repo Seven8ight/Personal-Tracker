@@ -26,7 +26,7 @@ const Account = (): React.ReactNode => {
       }
     }
   }, [tab]);
-  console.log(tab);
+
   return (
     <div id="accountModal">
       <div id="switch">
