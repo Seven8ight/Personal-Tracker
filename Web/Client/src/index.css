@@ -121,6 +121,9 @@ body {
   background-color: black;
 }
 
+#musicModal {
+  overflow: scroll;
+}
 #musicModal #switch {
   width: 100%;
 }
@@ -137,24 +140,41 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  align-content: center;
+  justify-content: center;
 }
 #musicModal #custom #audio1,
 #musicModal #custom #customlist #music1,
+#musicModal #custom [id^=music],
 #musicModal #current #audio1,
-#musicModal #current #customlist #music1 {
-  width: 300px;
+#musicModal #current #customlist #music1,
+#musicModal #current [id^=music] {
+  width: 429px;
   display: flex;
   justify-content: space-between;
   border-bottom: 1px solid black;
-  padding-bottom: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+#musicModal #custom #audio1 p,
+#musicModal #custom #customlist #music1 p,
+#musicModal #custom [id^=music] p,
+#musicModal #current #audio1 p,
+#musicModal #current #customlist #music1 p,
+#musicModal #current [id^=music] p {
+  width: 150px;
 }
 #musicModal #custom #audio1 #commands,
 #musicModal #custom #customlist #music1 #commands,
+#musicModal #custom [id^=music] #commands,
 #musicModal #current #audio1 #commands,
-#musicModal #current #customlist #music1 #commands {
+#musicModal #current #customlist #music1 #commands,
+#musicModal #current [id^=music] #commands {
   display: flex;
   justify-content: space-around;
   width: 100px;
+  position: absolute;
+  right: 0;
 }
 #musicModal #current {
   display: none;
@@ -683,7 +703,7 @@ body {
 }
 #timetab #musictab #banner {
   position: relative;
-  top: 30px;
+  top: 35px;
   border-radius: 25px;
 }
 #timetab #musictab #banner:hover #innerControls {

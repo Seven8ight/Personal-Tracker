@@ -171,6 +171,7 @@ const Dashboard = (): React.ReactNode => {
     playing,
     playHandler,
     timeHandler,
+    musicContainerHandler,
   } = useMusicPlayer();
 
   const nextPreviousHandler = (action: "Next" | "Back") => {
@@ -185,9 +186,25 @@ const Dashboard = (): React.ReactNode => {
     }
   };
 
+  const musicShuffler = (): void => {
+    playHandler(false);
+    timeHandler(0);
+    musicContainerHandler((musicArray) =>
+      musicArray
+        .map((value) => ({ value, sort: Math.random() * 10 }))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({ value }) => value)
+    );
+  };
+
   //Photos
   const photos = usePhotos(),
-    photo = photos?.photos[4];
+    [photoIndex, setIndex] = useState<number>(1),
+    photo = photos?.photos[photoIndex];
+
+  const photoIndexHandler = () => {
+    setIndex(Math.floor(Math.random() * 9));
+  };
 
   return (
     <div id="dashboard">
@@ -305,8 +322,12 @@ const Dashboard = (): React.ReactNode => {
           </button>
         </div>
         <div id="options">
-          <i className="fa-solid fa-shuffle"></i>
-          <i className="fa-solid fa-dice"></i>
+          <button onClick={() => musicShuffler()}>
+            <i className="fa-solid fa-shuffle"></i>
+          </button>
+          <button onClick={photoIndexHandler}>
+            <i className="fa-solid fa-dice"></i>
+          </button>
         </div>
       </div>
     </div>

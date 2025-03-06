@@ -27,7 +27,16 @@ const Images = createContext<photos | null>(null),
   client = createClient(
     "0tOAdsHjY29NMWloE9V2YQdbg017o4n2Fm7wHcw0hQ3R8hws2OeqL1lk"
   ),
-  query = "retro";
+  query: string[] = [
+    "retro",
+    "lofi",
+    "nature",
+    "calligraphy",
+    "setup",
+    "scenery",
+    "beach",
+    "study",
+  ];
 
 export const usePhotos = () => {
   const photos = useContext(Images);
@@ -46,7 +55,7 @@ const PictureHandler = ({
     const photoFetcher = async (): Promise<any | photos> => {
       try {
         let gallery: photos | any = await client.photos.search({
-          query,
+          query: query.at(Math.round(Math.random() * 7)) as string,
           per_page: 10,
         });
 

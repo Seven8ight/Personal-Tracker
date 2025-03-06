@@ -1,6 +1,6 @@
 import { useTabSwitcher } from "./Contexts/TabSwitcher";
 import { useModalOpener, type currentmodal } from "./Contexts/ModalHandler";
-import { useState } from "react";
+import { useMusicPlayer } from "./Contexts/MusicHandler";
 
 const Sidebar = (): React.ReactNode => {
   const { setter } = useTabSwitcher(),
@@ -9,7 +9,14 @@ const Sidebar = (): React.ReactNode => {
       event.stopPropagation();
       setter2(targetModal);
     },
-    [muted, setMuted] = useState<boolean>(false);
+    { audioRef, timeHandler, muted, mutedHandler, playHandler } =
+      useMusicPlayer();
+
+  const muteHandler = () => {
+    mutedHandler(!muted);
+    timeHandler(audioRef?.current.currentTime as number);
+    playHandler(true);
+  };
 
   return (
     <div id="sidebar">
@@ -33,7 +40,7 @@ const Sidebar = (): React.ReactNode => {
         >
           <i className="fa-solid fa-gear"></i>
         </button>
-        <button onClick={() => setMuted(!muted)}>
+        <button onClick={() => muteHandler()}>
           {!muted && <i className="fa-solid fa-volume-xmark"></i>}
           {muted && <i className="fa-solid fa-volume-high"></i>}
         </button>

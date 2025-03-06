@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useMusicPlayer } from "../Contexts/MusicHandler";
 
 type option = "Currentplaylist" | "CustomList";
 
@@ -6,7 +7,8 @@ const Music = (): React.ReactNode => {
   const [tab, setTab] = useState<option>("CustomList"),
     tabHandler = (Tab: option) => {
       setTab(Tab);
-    };
+    },
+    { musicContainer } = useMusicPlayer();
 
   useEffect(() => {
     const customTab = document.querySelector<HTMLDivElement>(
@@ -31,6 +33,7 @@ const Music = (): React.ReactNode => {
       }
     }
   }, [tab]);
+
   return (
     <div id="musicModal">
       <div id="switch">
@@ -62,17 +65,19 @@ const Music = (): React.ReactNode => {
         </div>
       </div>
       <div id="current">
-        <div id="audio1">
-          <p>Name</p>
-          <div id="commands">
-            <button>
-              <i className="fa-solid fa-play"></i>
-            </button>
-            <button>
-              <i className="fa-solid fa-xmark"></i>
-            </button>
+        {musicContainer.map((music, index) => (
+          <div id={`music-${index}`} key={index}>
+            <p>{music.split("/")[4].replace("_", " ")}</p>
+            <div id="commands">
+              <button>
+                <i className="fa-solid fa-play"></i>
+              </button>
+              <button>
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
           </div>
-        </div>
+        ))}
       </div>
     </div>
   );
