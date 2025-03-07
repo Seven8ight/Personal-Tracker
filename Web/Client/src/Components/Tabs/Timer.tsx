@@ -198,7 +198,7 @@ const Timer = (): React.ReactNode => {
   };
   //Photos
   const photos = usePhotos(),
-    photo = photos?.photos[4];
+    photo = photos?.photos[5];
 
   return (
     <div id="timetab">
