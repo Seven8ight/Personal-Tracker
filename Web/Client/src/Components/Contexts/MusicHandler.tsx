@@ -126,8 +126,10 @@ const MusicHandler = ({
   }, [index, playing, currentTime, muted]);
 
   setInterval(() => {
-    if (audioRef.current.currentTime == audioRef.current.duration)
-      setIndex((index) => index + 1);
+    if (audioRef.current.ended) {
+      if (index + 1 == urls.length) setIndex(0);
+      else setIndex((current) => current + 1);
+    }
   }, 1000);
 
   return (

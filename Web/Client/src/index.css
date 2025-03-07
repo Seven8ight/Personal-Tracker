@@ -176,6 +176,25 @@ body {
   position: absolute;
   right: 0;
 }
+#musicModal #custom #customlist #emptycustom,
+#musicModal #current #customlist #emptycustom {
+  /* From https://css.glass */
+  background: rgba(222, 210, 210, 0);
+  border-radius: 10px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4.9px);
+  -webkit-backdrop-filter: blur(4.9px);
+  border: 1px solid rgba(222, 210, 210, 0.25);
+  width: 100%;
+  height: 300px;
+  text-align: center;
+  font-family: "Lobster Two", sans-serif;
+}
+#musicModal #custom #customlist #emptycustom p,
+#musicModal #current #customlist #emptycustom p {
+  position: relative;
+  top: 125px;
+}
 #musicModal #current {
   display: none;
 }

@@ -151,6 +151,21 @@ body {
         right: 0;
       }
     }
+
+    #customlist {
+      & #emptycustom {
+        @include glassmorphism();
+        width: 100%;
+        height: 300px;
+        text-align: center;
+        font-family: "Lobster Two", sans-serif;
+
+        & p {
+          position: relative;
+          top: 125px;
+        }
+      }
+    }
   }
 
   #current {

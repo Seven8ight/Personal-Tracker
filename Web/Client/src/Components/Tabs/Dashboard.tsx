@@ -3,6 +3,7 @@ import { ChartContainer, ChartConfig } from "../ui/chart";
 import { Bar, BarChart, XAxis } from "recharts";
 import { useMusicPlayer } from "../Contexts/MusicHandler";
 import { usePhotos } from "../Contexts/PicturesHandler";
+import { timeData, taskData } from "./Timer";
 import Error from "../Popups/Error";
 
 type audio = {
@@ -11,29 +12,78 @@ type audio = {
   audio: string;
   playing: boolean;
 };
+type chartData = {
+  day: string;
+  tasks: number;
+  hours: number;
+};
 
 const Dashboard = (): React.ReactNode => {
   //Summary
-  const chartData = [
-    { month: "January", day: "Monday", desktop: 186, mobile: 80 },
-    { month: "February", day: "Tuesday", desktop: 305, mobile: 200 },
-    { month: "March", day: "Wednesday", desktop: 237, mobile: 120 },
-    { month: "April", day: "Thursday", desktop: 73, mobile: 190 },
-    { month: "May", day: "Friday", desktop: 209, mobile: 130 },
-    { month: "June", day: "Saturday", desktop: 214, mobile: 140 },
-    { day: "Sunday", desktop: 150, mobile: 70 },
-  ];
+  const chartData: chartData[] = [
+      { day: "Monday", tasks: 186, hours: 80 },
+      { day: "Tuesday", tasks: 305, hours: 200 },
+      { day: "Wednesday", tasks: 237, hours: 120 },
+      { day: "Thursday", tasks: 73, hours: 190 },
+      { day: "Friday", tasks: 209, hours: 130 },
+      { day: "Saturday", tasks: 214, hours: 140 },
+      { day: "Sunday", tasks: 150, hours: 70 },
+    ],
+    chartConfig = {
+      tasks: {
+        label: "tasks",
+        color: "black",
+      },
+      hours: {
+        label: "hours",
+        color: "white",
+      },
+    } satisfies ChartConfig;
 
-  const chartConfig = {
-    desktop: {
-      label: "Desktop",
-      color: "white",
-    },
-    mobile: {
-      label: "Mobile",
-      color: "black",
-    },
-  } satisfies ChartConfig;
+  const [tasksComplete, setTasks] = useState<taskData[]>([]),
+    [hoursComplete, setHours] = useState<timeData[]>([]),
+    [taskCount, setCount] = useState<number>(0),
+    [timeCount, setTCount] = useState<number>(0);
+
+  //Local storage for no. of hours and tasks done
+  useEffect(() => {
+    const tasksDone = window.localStorage.getItem("tasksdone");
+    const hoursDone = window.localStorage.getItem("time");
+
+    if (tasksDone) {
+      setTasks(JSON.parse(tasksDone) as taskData[]);
+    }
+    if (hoursDone) {
+      setHours(JSON.parse(hoursDone) as timeData[]);
+    }
+  }, []);
+  useEffect(() => {
+    let taskCountSum = 0;
+    tasksComplete.forEach((day) => {
+      taskCountSum += day.tasks;
+    });
+    setCount(taskCountSum);
+
+    let timeCountSum = 0;
+    hoursComplete.forEach((day) => {
+      timeCountSum += day.timeInHrs;
+    });
+    setTCount(timeCountSum);
+
+    chartData.map((data) => {
+      let dayFinder = tasksComplete.find((task) => task.day == data.day),
+        timeFinder = hoursComplete.find((hours) => hours.day == data.day);
+
+      if (dayFinder) {
+        return {
+          day: data.day,
+          tasks: dayFinder.tasks,
+          hours: timeFinder?.timeInHrs,
+        };
+      }
+      return data;
+    });
+  }, [tasksComplete, hoursComplete]);
 
   //Audio-Recordings
   const [audioTapes, setTapes] = useState<audio[]>([]),
@@ -171,35 +221,40 @@ const Dashboard = (): React.ReactNode => {
     playing,
     playHandler,
     timeHandler,
+    musicContainer,
     musicContainerHandler,
   } = useMusicPlayer();
 
   const nextPreviousHandler = (action: "Next" | "Back") => {
-    if (action == "Next") {
-      if (index + 1 == total) indexHandler(0);
-      else indexHandler((current) => current + 1);
+      if (action == "Next") {
+        if (index + 1 == total) indexHandler(0);
+        else indexHandler((current) => current + 1);
+        timeHandler(0);
+      } else {
+        if (index - 1 < 0) indexHandler(total - 1);
+        else indexHandler((current) => current - 1);
+        timeHandler(0);
+      }
+    },
+    musicShuffler = (): void => {
+      playHandler(false);
       timeHandler(0);
-    } else {
-      if (index - 1 < 0) indexHandler(total - 1);
-      else indexHandler((current) => current - 1);
-      timeHandler(0);
-    }
-  };
-
-  const musicShuffler = (): void => {
-    playHandler(false);
-    timeHandler(0);
-    musicContainerHandler((musicArray) =>
-      musicArray
-        .map((value) => ({ value, sort: Math.random() * 10 }))
-        .sort((a, b) => a.sort - b.sort)
-        .map(({ value }) => value)
-    );
-  };
+      musicContainerHandler((musicArray) =>
+        musicArray
+          .map((value) => ({ value, sort: Math.random() * 10 }))
+          .sort((a, b) => a.sort - b.sort)
+          .map(({ value }) => value)
+      );
+      indexHandler(
+        musicContainer.findIndex((element) =>
+          audioRef?.current.src.includes(element)
+        )
+      );
+    };
 
   //Photos
   const photos = usePhotos(),
-    [photoIndex, setIndex] = useState<number>(1),
+    [photoIndex, setIndex] = useState<number>(3),
     photo = photos?.photos[photoIndex];
 
   const photoIndexHandler = () => {
@@ -214,12 +269,12 @@ const Dashboard = (): React.ReactNode => {
           <div id="tasksdone">
             <i className="fa-solid fa-list-check"></i>
             <p>Tasks so far</p>
-            <p>3 tasks done</p>
+            <p>{taskCount} tasks completed</p>
           </div>
           <div id="timetaken">
             <i className="fa-solid fa-clock-rotate-left"></i>
             <p>Time taken</p>
-            <p>5 hrs so far</p>
+            <p>{timeCount} hrs so far</p>
           </div>
         </div>
       </div>
@@ -237,8 +292,8 @@ const Dashboard = (): React.ReactNode => {
               axisLine={false}
               tickFormatter={(value) => value.slice(0, 3)}
             />
-            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
-            <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
+            <Bar dataKey="tasks" fill="var(--color-tasks)" radius={4} />
+            <Bar dataKey="hours" fill="var(--color-hours)" radius={4} />
           </BarChart>
         </ChartContainer>
       </div>

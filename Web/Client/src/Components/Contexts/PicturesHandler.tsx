@@ -36,6 +36,7 @@ const Images = createContext<photos | null>(null),
     "scenery",
     "beach",
     "study",
+    "motivation",
   ];
 
 export const usePhotos = () => {
@@ -55,7 +56,7 @@ const PictureHandler = ({
     const photoFetcher = async (): Promise<any | photos> => {
       try {
         let gallery: photos | any = await client.photos.search({
-          query: query.at(Math.round(Math.random() * 7)) as string,
+          query: query.at(Math.round(Math.random() * 8)) as string,
           per_page: 10,
         });
 
