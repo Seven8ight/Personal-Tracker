@@ -295,7 +295,7 @@ body {
   justify-content: space-between;
 }
 #settingsModal div:nth-of-type(2) #backgroundImages img {
-  width: 30%;
+  width: 25%;
   height: 75px;
   -o-object-fit: cover;
      object-fit: cover;

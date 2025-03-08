@@ -1,4 +1,8 @@
 import { useTimes } from "../Contexts/PomodoroSettings";
+import Background1 from "./../../Resources/layered-waves-haikei.svg";
+import Background2 from "./../../Resources/stacked-waves-haikei.svg";
+import Background3 from "./../../Resources/circle-scatter-haikei.svg";
+import Background4 from "./../../Resources/layered-waves-haikei-2.svg";
 
 type settings = "focus" | "longBreak" | "shortBreak";
 
@@ -63,9 +67,10 @@ const Settings = (): React.ReactNode => {
       <div id="background">
         <h2>Background Images</h2>
         <div id="backgroundImages">
-          <img src="https://img.freepik.com/premium-photo/layered-waves-background-abstract_701806-1002.jpg" />
-          <img src="https://png.pngtree.com/thumb_back/fw800/background/20240704/pngtree-modern-blue-and-orange-layered-wave-background-design-image_15922110.jpg" />
-          <img src="https://img.freepik.com/premium-photo/elegant-abstract-design-featuring-layered-waves-warm-cool-tones-perfect-backgrounds-modern-aesthetics_985997-17184.jpg" />
+          <img src={Background1} />
+          <img src={Background2} />
+          <img src={Background3} />
+          <img src={Background4} />
         </div>
       </div>
       <hr />
