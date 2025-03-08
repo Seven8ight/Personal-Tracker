@@ -24,7 +24,9 @@ type photo = {
 };
 
 const Images = createContext<photos | null>(null),
-  client = createClient("private api"),
+  client = createClient(
+    "0tOAdsHjY29NMWloE9V2YQdbg017o4n2Fm7wHcw0hQ3R8hws2OeqL1lk"
+  ),
   query: string[] = [
     "retro",
     "lofi",

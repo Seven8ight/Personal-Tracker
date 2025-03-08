@@ -8,6 +8,7 @@ import ModalHandler from "./Components/Contexts/ModalHandler.tsx";
 import PomoProvider from "./Components/Contexts/PomodoroSettings.tsx";
 import MusicHandler from "./Components/Contexts/MusicHandler.tsx";
 import PicturesHandler from "./Components/Contexts/PicturesHandler.tsx";
+import StorageHandler from "./Components/Contexts/StorageHandler.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -16,7 +17,9 @@ createRoot(document.getElementById("root")!).render(
         <PomoProvider>
           <MusicHandler>
             <PicturesHandler>
-              <App />
+              <StorageHandler>
+                <App />
+              </StorageHandler>
             </PicturesHandler>
           </MusicHandler>
         </PomoProvider>

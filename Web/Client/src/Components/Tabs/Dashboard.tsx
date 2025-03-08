@@ -4,7 +4,9 @@ import { Bar, BarChart, XAxis } from "recharts";
 import { useMusicPlayer } from "../Contexts/MusicHandler";
 import { usePhotos } from "../Contexts/PicturesHandler";
 import { timeData, taskData } from "./Timer";
+import { backgrounds } from "../Modals/Settings ";
 import Error from "../Popups/Error";
+import { useStorage } from "../Contexts/StorageHandler";
 
 type audio = {
   id: number;
@@ -40,50 +42,27 @@ const Dashboard = (): React.ReactNode => {
       },
     } satisfies ChartConfig;
 
-  const [tasksComplete, setTasks] = useState<taskData[]>([]),
-    [hoursComplete, setHours] = useState<timeData[]>([]),
-    [taskCount, setCount] = useState<number>(0),
+  //Local storage for no. of hours ,tasks done
+  const [taskCount, setCount] = useState<number>(0),
     [timeCount, setTCount] = useState<number>(0);
 
-  //Local storage for no. of hours and tasks done
+  const { backgroundId } = useStorage();
+
   useEffect(() => {
-    const tasksDone = window.localStorage.getItem("tasksdone");
-    const hoursDone = window.localStorage.getItem("time");
+    if (backgroundId) {
+      document.body.style.background = `url("${
+        backgrounds[backgroundId - 1]
+      }")`;
 
-    if (tasksDone) {
-      setTasks(JSON.parse(tasksDone) as taskData[]);
+      if (backgroundId == 0 || backgroundId == 1)
+        document.body.style.color = "white";
+      else document.body.style.color = "black";
+
+      document.body.style.backgroundAttachment = "fixed";
+      document.body.style.backgroundRepeat = "no-repeat";
+      document.body.style.backgroundSize = "cover";
     }
-    if (hoursDone) {
-      setHours(JSON.parse(hoursDone) as timeData[]);
-    }
-  }, []);
-  useEffect(() => {
-    let taskCountSum = 0;
-    tasksComplete.forEach((day) => {
-      taskCountSum += day.tasks;
-    });
-    setCount(taskCountSum);
-
-    let timeCountSum = 0;
-    hoursComplete.forEach((day) => {
-      timeCountSum += day.timeInHrs;
-    });
-    setTCount(timeCountSum);
-
-    chartData.map((data) => {
-      let dayFinder = tasksComplete.find((task) => task.day == data.day),
-        timeFinder = hoursComplete.find((hours) => hours.day == data.day);
-
-      if (dayFinder) {
-        return {
-          day: data.day,
-          tasks: dayFinder.tasks,
-          hours: timeFinder?.timeInHrs,
-        };
-      }
-      return data;
-    });
-  }, [tasksComplete, hoursComplete]);
+  }, [backgroundId]);
 
   //Audio-Recordings
   const [audioTapes, setTapes] = useState<audio[]>([]),
@@ -352,7 +331,9 @@ const Dashboard = (): React.ReactNode => {
         <div id="musicdesc">
           <img src={photo?.src.original} alt="music banner" />
           <p>
-            <a href={photo?.photographer_url}>{photo?.photographer}</a>
+            <a target="_blank" href={photo?.photographer_url}>
+              {photo?.photographer}
+            </a>
           </p>
         </div>
         <div id="audio">

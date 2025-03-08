@@ -18,6 +18,12 @@ export type timeData = {
   day: string;
   timeInHrs: number;
 };
+// type currentTime = {
+//   type: times;
+//   minutes: number;
+//   seconds: number;
+//   paused: boolean;
+// };
 
 export const dayValue = (): string => {
   switch (new Date().getDay()) {
@@ -57,8 +63,7 @@ const Timer = (): React.ReactNode => {
 
   const [minutes, setMinutes] = useState<number>(defaults[currentTimeOption]),
     [seconds, setSeconds] = useState<number>(0),
-    [pause, setPause] = useState<boolean>(true),
-    [storageMinutes, setSMinutes] = useState<number>(0);
+    [pause, setPause] = useState<boolean>(true);
 
   useEffect(() => {
     setMinutes(defaults[currentTimeOption]);
@@ -70,9 +75,8 @@ const Timer = (): React.ReactNode => {
         if (seconds == 0) {
           setSeconds(59);
           setMinutes((minutes) => minutes - 1);
-          setSMinutes((minutes) => minutes + 1);
         }
-        if (minutes == 0) clearInterval(timeInterval);
+        if (minutes == 0 && seconds == 0) clearInterval(timeInterval);
       }
     }, 1000);
 
@@ -119,59 +123,78 @@ const Timer = (): React.ReactNode => {
       );
     },
     deleteTask = (taskId: number) => {
-      setTasks((current) => current.filter((task) => task.id != taskId));
+      setTasks((current) =>
+        current
+          .filter((task) => task.id != taskId)
+          .map((task) => {
+            if (taskId > task.id) return task;
+            else
+              return {
+                id: task.id - 1,
+                task: task.task,
+                status: task.status,
+              };
+          })
+      );
     };
+
+  useEffect(() => {
+    setCount(tasks.length);
+  }, [tasks]);
+
+  // --> local storage, present tasks
+  useEffect(() => {
+    let presentTasks = window.localStorage.getItem("PresentTasks");
+    if (presentTasks == null)
+      window.localStorage.setItem("PresentTasks", JSON.stringify(tasks));
+  }, [tasks]);
 
   //Local storage
   const [tasksdone, setDone] = useState<taskData[]>([]),
-    [timedone, setTDone] = useState<timeData[]>([]);
-
+    [finishedTasks, setCounter] = useState<number>(0);
+  // --> Get any data present
   useEffect(() => {
-    let taskGetter = window.localStorage.getItem("tasksdone"),
-      timeGetter = window.localStorage.getItem("time");
+    let taskGetter = window.localStorage.getItem("TasksDone"),
+      presentTasks = window.localStorage.getItem("PresentTasks");
+
     if (taskGetter != null) setDone(JSON.parse(taskGetter) as taskData[]);
-    if (timeGetter != null) setTDone(JSON.parse(timeGetter) as timeData[]);
+
+    if (presentTasks != null)
+      if ((JSON.parse(presentTasks) as task[]).length != 0)
+        setTasks(JSON.parse(presentTasks));
   }, []);
-
   useEffect(() => {
-    let tasksDone: taskData = {
-        day: dayValue(),
-        tasks: tasks.filter((tasks) => tasks.status == "Complete").length,
-      },
-      timeDone: timeData = {
-        day: dayValue(),
-        timeInHrs: Math.floor(storageMinutes / 60),
-      };
-
-    if (tasksdone.length > 0) {
-      let finder = tasksdone.find((Day) => Day.day == tasksDone.day);
-
-      if (finder)
-        setDone((tasks) =>
-          tasks.map((task) => {
-            if (task.day == tasksDone.day) task.tasks = tasksDone.tasks;
-            return task;
-          })
-        );
-      else setDone((current) => [...current, tasksDone]);
-    } else setDone([tasksDone]);
-    if (timedone.length > 0) {
-      let finder = timedone.find((Day) => Day.day == tasksDone.day);
-
-      if (finder)
-        setTDone((time) =>
-          time.map((Day) => {
-            if (Day.day == timeDone.day) {
-              Day.timeInHrs = timeDone.timeInHrs;
+    setCounter(tasks.filter((task) => task.status == "Complete").length);
+  }, [tasks, finishedTasks]);
+  // --> Update summary data in total
+  useEffect(() => {
+    //Present Tasks and total tasks done
+    if (tasksdone.length == 0) {
+      setDone([
+        {
+          day: dayValue(),
+          tasks: tasks.filter((task) => task.status == "Complete").length,
+        },
+      ]);
+    } else {
+      let finder = tasksdone.find((days) => days.day == dayValue());
+      if (finder) {
+        setDone(
+          tasksdone.map((days) => {
+            if (days.day == finder.day) {
+              return {
+                day: finder.day,
+                tasks: finishedTasks,
+              };
+            } else {
+              return days;
             }
-            return Day;
           })
         );
-      else setTDone((current) => [...current, timeDone]);
-    } else setTDone([timeDone]);
-
-    window.localStorage.setItem("tasksdone", JSON.stringify(tasksdone));
-    window.localStorage.setItem("time", JSON.stringify(timedone));
+      }
+    }
+    window.localStorage.setItem("TasksDone", JSON.stringify(tasksdone));
+    window.localStorage.setItem("PresentTasks", JSON.stringify(tasks));
   }, [tasks, minutes]);
 
   //Music Handler

@@ -24,6 +24,7 @@ const Music = (): React.ReactNode => {
       musicContainerHandler,
       playHandler,
       musicContainer,
+      timeHandler,
     } = useMusicPlayer(),
     CurrentlyPlaying = ({
       musicIndex,
@@ -34,14 +35,25 @@ const Music = (): React.ReactNode => {
     }): React.ReactNode => {
       if (audioRef?.current.src.includes(musicName))
         return (
-          <button onClick={() => playHandler(!playing)}>
+          <button
+            onClick={(event) => {
+              event.stopPropagation();
+              playHandler(!playing);
+              timeHandler(audioRef.current.currentTime);
+            }}
+          >
             {playing && <i className="fa-solid fa-pause" />}
             {!playing && <i className="fa-solid fa-play" />}
           </button>
         );
       else {
         return (
-          <button onClick={() => indexHandler(musicIndex)}>
+          <button
+            onClick={(event) => {
+              event.stopPropagation();
+              indexHandler(musicIndex);
+            }}
+          >
             <i className="fa-solid fa-play"></i>
           </button>
         );
@@ -144,6 +156,7 @@ const Music = (): React.ReactNode => {
           {customList.length == 0 && (
             <div id="emptycustom">
               <p>No customs added</p>
+              <p>Experimental, currently not functional as expected</p>
             </div>
           )}
         </div>
@@ -152,7 +165,7 @@ const Music = (): React.ReactNode => {
         {musicContainer.map((music, index) => {
           return (
             <div id={`music-${index}`} key={index}>
-              <p>{music.split("/")[4].replace(/_/g, " ")}</p>
+              <p>{music.split("/")[4].replace(/_/g, " ").split(".")[0]}</p>
               <div id="commands">
                 <CurrentlyPlaying musicIndex={index} musicName={music} />
                 <button onClick={() => deletionHandler(index)}>

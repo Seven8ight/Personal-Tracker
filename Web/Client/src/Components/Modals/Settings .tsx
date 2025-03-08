@@ -1,10 +1,13 @@
 import { useTimes } from "../Contexts/PomodoroSettings";
-import Background1 from "./../../Resources/layered-waves-haikei.svg";
-import Background2 from "./../../Resources/stacked-waves-haikei.svg";
-import Background3 from "./../../Resources/circle-scatter-haikei.svg";
-import Background4 from "./../../Resources/layered-waves-haikei-2.svg";
+import { useStorage } from "../Contexts/StorageHandler";
+import Background1 from "./../../public/circle-scatter-haikei.svg";
+import Background2 from "./../../public/layered-waves-haikei-2.svg";
+import Background3 from "./../../public/layered-waves-haikei.svg";
+import Background4 from "./../../public/stacked-waves-haikei.svg";
 
 type settings = "focus" | "longBreak" | "shortBreak";
+
+export const backgrounds = [Background1, Background2, Background3, Background4];
 
 const Settings = (): React.ReactNode => {
   const { defaults, setSettings } = useTimes(),
@@ -24,7 +27,41 @@ const Settings = (): React.ReactNode => {
           ...defaults,
           [setting]: value,
         });
+    },
+    backgroundSetter = (id: number) => {
+      switch (id) {
+        case 1:
+          backgroundHandler(1);
+          document.body.style.background = `url("${Background1}")`;
+          document.body.style.color = "white";
+          break;
+        case 2:
+          backgroundHandler(2);
+          document.body.style.background = `url("${Background2}")`;
+          document.body.style.color = "black";
+          break;
+        case 3:
+          backgroundHandler(3);
+          document.body.style.background = `url("${Background3}")`;
+          document.body.style.color = "white";
+          break;
+        case 4:
+          backgroundHandler(4);
+          document.body.style.background = `url("${Background4}")`;
+          document.body.style.color = "black";
+          break;
+        default:
+          backgroundHandler(4);
+          document.body.style.background = `url("${Background4}")`;
+          document.body.style.color = "black";
+          break;
+      }
+      document.body.style.backgroundAttachment = "fixed";
+      document.body.style.backgroundRepeat = "no-repeat";
+      document.body.style.backgroundSize = "cover";
     };
+
+  const { backgroundHandler } = useStorage();
 
   return (
     <div id="settingsModal">
@@ -67,10 +104,10 @@ const Settings = (): React.ReactNode => {
       <div id="background">
         <h2>Background Images</h2>
         <div id="backgroundImages">
-          <img src={Background1} />
-          <img src={Background2} />
-          <img src={Background3} />
-          <img src={Background4} />
+          <img onClick={() => backgroundSetter(1)} src={Background1} />
+          <img onClick={() => backgroundSetter(2)} src={Background2} />
+          <img onClick={() => backgroundSetter(3)} src={Background3} />
+          <img onClick={() => backgroundSetter(4)} src={Background4} />
         </div>
       </div>
       <hr />
@@ -84,8 +121,9 @@ const Settings = (): React.ReactNode => {
         <p>
           <b>
             <u>
-              Images rightfully belong to their owners. I claim no ownership of
-              any of the images presented in this website
+              Images and music on this site rightfully belong to their owners. I
+              claim no ownership of any of the images or music presented in the
+              website
             </u>
           </b>
         </p>

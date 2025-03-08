@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Cookie&family=Dancing+Script:wght@400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lobster+Two:ital,wght@0,400;0,700;1,400;1,700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 body {
-  background: url("./Resources/layered-waves-haikei-2.svg");
+  background: url("./public/layered-waves-haikei-2.svg");
   background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
@@ -295,11 +295,14 @@ body {
   justify-content: space-between;
 }
 #settingsModal div:nth-of-type(2) #backgroundImages img {
-  width: 25%;
+  width: 22.5%;
   height: 75px;
   -o-object-fit: cover;
      object-fit: cover;
   border-radius: 10px;
+}
+#settingsModal div:nth-of-type(2) #backgroundImages img:hover {
+  cursor: pointer;
 }
 #settingsModal div:last-of-type #socials {
   margin: auto;
