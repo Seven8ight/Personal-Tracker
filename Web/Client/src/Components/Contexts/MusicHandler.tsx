@@ -9,6 +9,7 @@ import soundFile8 from "./../../Resources/Music/Transcendence.mp3";
 import soundFile9 from "./../../Resources/Music/Wildflowers.mp3";
 import soundFile10 from "./../../Resources/Music/hibiscus.mp3";
 import soundFile11 from "./../../Resources/Music/And_so_it_begins.mp3";
+import soundFile12 from "./../../Resources/Music/Longing_Redemptions.mp3";
 import {
   createContext,
   Dispatch,
@@ -98,6 +99,7 @@ const MusicHandler = ({
       soundFile9,
       soundFile10,
       soundFile11,
+      soundFile12,
     ]),
     [index, setIndex] = useState<number>(
       Math.floor(Math.random() * (urls.length - 1))

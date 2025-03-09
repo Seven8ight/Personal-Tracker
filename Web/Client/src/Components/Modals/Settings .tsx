@@ -10,6 +10,7 @@ type settings = "focus" | "longBreak" | "shortBreak";
 export const backgrounds = [Background1, Background2, Background3, Background4];
 
 const Settings = (): React.ReactNode => {
+  const { backgroundHandler } = useStorage();
   const { defaults, setSettings } = useTimes(),
     settingsHandler = (setting: settings, value: number) => {
       if (setting == "focus")
@@ -60,8 +61,6 @@ const Settings = (): React.ReactNode => {
       document.body.style.backgroundRepeat = "no-repeat";
       document.body.style.backgroundSize = "cover";
     };
-
-  const { backgroundHandler } = useStorage();
 
   return (
     <div id="settingsModal">

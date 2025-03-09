@@ -3,7 +3,6 @@ import { ChartContainer, ChartConfig } from "../ui/chart";
 import { Bar, BarChart, XAxis } from "recharts";
 import { useMusicPlayer } from "../Contexts/MusicHandler";
 import { usePhotos } from "../Contexts/PicturesHandler";
-import { timeData, taskData } from "./Timer";
 import { backgrounds } from "../Modals/Settings ";
 import Error from "../Popups/Error";
 import { useStorage } from "../Contexts/StorageHandler";
@@ -46,7 +45,7 @@ const Dashboard = (): React.ReactNode => {
   const [taskCount, setCount] = useState<number>(0),
     [timeCount, setTCount] = useState<number>(0);
 
-  const { backgroundId } = useStorage();
+  const { backgroundId, summaryTimes, summaryTasks } = useStorage();
 
   useEffect(() => {
     if (backgroundId) {
@@ -54,15 +53,35 @@ const Dashboard = (): React.ReactNode => {
         backgrounds[backgroundId - 1]
       }")`;
 
-      if (backgroundId == 0 || backgroundId == 1)
+      if (backgroundId == 1 || backgroundId == 3) {
         document.body.style.color = "white";
-      else document.body.style.color = "black";
+        document
+          .querySelectorAll("input")
+          .forEach((input: HTMLInputElement) => {
+            input.style.caretColor = "white";
+          });
+      } else document.body.style.color = "black";
 
       document.body.style.backgroundAttachment = "fixed";
       document.body.style.backgroundRepeat = "no-repeat";
       document.body.style.backgroundSize = "cover";
     }
   }, [backgroundId]);
+
+  useEffect(() => {
+    setCount(
+      summaryTasks.reduce(
+        (accumulator, currValue) => accumulator + currValue.taskCount,
+        0
+      )
+    );
+    setTCount(
+      summaryTimes.reduce(
+        (accumulator, currValue) => accumulator + currValue.timeInhours,
+        0
+      )
+    );
+  }, [summaryTasks, summaryTimes]);
 
   //Audio-Recordings
   const [audioTapes, setTapes] = useState<audio[]>([]),
@@ -220,7 +239,7 @@ const Dashboard = (): React.ReactNode => {
       timeHandler(0);
       musicContainerHandler((musicArray) =>
         musicArray
-          .map((value) => ({ value, sort: Math.random() * 10 }))
+          .map((value) => ({ value, sort: Math.random() * 11 }))
           .sort((a, b) => a.sort - b.sort)
           .map(({ value }) => value)
       );

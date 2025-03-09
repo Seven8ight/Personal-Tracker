@@ -7,15 +7,17 @@ import {
   useEffect,
   useState,
 } from "react";
-import { useTimes } from "./PomodoroSettings";
+import { times } from "../Tabs/Timer";
 
-type timer = {
-  type: "short break" | "long break" | "focus";
+export type timer = {
+  type: times;
   minutes: number;
   seconds: number;
+  paused: boolean;
 };
 type task = {
-  name: string;
+  id: number;
+  task: string;
   status: "Complete" | "Incomplete";
 };
 type data = {
@@ -26,7 +28,7 @@ type data = {
   presentTasks: task[];
   activeTasksHandler: Dispatch<SetStateAction<task[]>>;
   timer: timer;
-  timeHandler: Dispatch<SetStateAction<timer>>;
+  activeTimeHandler: Dispatch<SetStateAction<timer>>;
   backgroundId: number | null;
   backgroundHandler: Dispatch<SetStateAction<number | null>>;
 };
@@ -50,8 +52,9 @@ const Storage = createContext<data>({
     type: "focus",
     minutes: 45,
     seconds: 0,
+    paused: true,
   },
-  timeHandler: () => {},
+  activeTimeHandler: () => {},
   backgroundId: 1,
   backgroundHandler: () => {},
 });
@@ -65,7 +68,7 @@ export const useStorage = () => {
     presentTasks,
     activeTasksHandler,
     timer,
-    timeHandler,
+    activeTimeHandler,
     backgroundId,
     backgroundHandler,
   } = useContext(Storage);
@@ -78,7 +81,7 @@ export const useStorage = () => {
     presentTasks,
     activeTasksHandler,
     timer,
-    timeHandler,
+    activeTimeHandler,
     backgroundId,
     backgroundHandler,
   };
@@ -89,50 +92,50 @@ const StorageHandler = ({
 }: {
   children: React.ReactNode;
 }): React.ReactNode => {
-  const { defaults } = useTimes();
   //Current tasks
   const [tasks, setTasks] = useState<task[]>([]),
-    [timer, setTimer] = useState<timer>({
-      type: "focus",
-      minutes: defaults.focus,
-      seconds: 0,
-    }),
+    [timer, setTimer] = useState<timer | null>(null),
     [backgroundId, setBId] = useState<number | null>(null);
   //Summary Data
   const [DayTasks, setDTasks] = useState<dayTasks[]>([]),
     [DayTimes, setTimes] = useState<timeTaken[]>([]);
 
+  const presentTasks = localStorage.getItem("Present Tasks"),
+    presentTime = localStorage.getItem("Present Time"),
+    summaryTasks = localStorage.getItem("Summary Tasks"),
+    summaryTime = localStorage.getItem("Summary Time"),
+    localbackgroundId = localStorage.getItem("Background Id");
+
   //Getter
   useEffect(() => {
-    let backgroundId = window.localStorage.getItem("BackgroundId"),
-      tasksSoFar = window.localStorage.getItem("TasksDone"),
-      timeSoFar = window.localStorage.getItem("TimeSoFar");
-    if (typeof backgroundId == "string") setBId(Number.parseInt(backgroundId));
-
-    if (typeof tasksSoFar == "string")
-      if ((JSON.parse(tasksSoFar) as dayTasks[]).length != 0)
-        setDTasks(JSON.parse(tasksSoFar) as dayTasks[]);
-
-    if (typeof timeSoFar == "string")
-      if ((JSON.parse(timeSoFar) as timeTaken[]).length != 0)
-        setTimes(JSON.parse(timeSoFar) as timeTaken[]);
+    if (localbackgroundId != null) setBId(Number.parseInt(localbackgroundId));
+    if (presentTasks != null) setTasks(JSON.parse(presentTasks));
+    if (presentTime != null) setTimer(JSON.parse(presentTime));
+    if (summaryTime != null) setTimes(JSON.parse(summaryTime));
+    if (summaryTasks != null) setDTasks(JSON.parse(summaryTasks));
   }, []);
 
+  //Setter -- first time joining
   useEffect(() => {
-    window.localStorage.setItem("Summary Tasks", JSON.stringify(DayTasks));
-    window.localStorage.setItem("Present Tasks", JSON.stringify(tasks));
-    window.localStorage.setItem(
-      "BackgroundId",
-      typeof backgroundId == "number" ? backgroundId.toString() : (1).toString()
-    );
-    window.localStorage.setItem("Summary Time", JSON.stringify(DayTimes));
-    window.localStorage.setItem("Present Time", JSON.stringify(timer));
-  }, [backgroundId, DayTasks, DayTimes, tasks, timer]);
+    if (typeof backgroundId == "number")
+      window.localStorage.setItem("Background Id", backgroundId.toString());
 
-  useEffect(() => {
-    if (backgroundId != null)
-      window.localStorage.setItem("backgroundId", backgroundId.toString());
-  }, [backgroundId]);
+    if (presentTasks == null)
+      window.localStorage.setItem("Present Tasks", JSON.stringify([]));
+    else window.localStorage.setItem("Present Tasks", JSON.stringify(tasks));
+
+    if (presentTime == null)
+      window.localStorage.setItem("Present Time", JSON.stringify({}));
+    else window.localStorage.setItem("Present Time", JSON.stringify(timer));
+
+    if (summaryTasks == null)
+      window.localStorage.setItem("Summary Tasks", JSON.stringify([]));
+    else window.localStorage.setItem("Summary Tasks", JSON.stringify(DayTasks));
+
+    if (summaryTime == null)
+      window.localStorage.setItem("Summary Time", JSON.stringify([]));
+    else window.localStorage.setItem("Summary Time", JSON.stringify(DayTimes));
+  }, [backgroundId, tasks, timer, DayTasks, DayTimes]);
 
   return (
     <Storage.Provider
@@ -143,8 +146,8 @@ const StorageHandler = ({
         summaryTimeHandler: setTimes,
         presentTasks: tasks,
         activeTasksHandler: setTasks,
-        timer: timer,
-        timeHandler: setTimer,
+        timer: timer as timer,
+        activeTimeHandler: setTimer as Dispatch<SetStateAction<timer>>,
         backgroundId: backgroundId,
         backgroundHandler: setBId,
       }}

@@ -1,29 +1,29 @@
 import Quotes from "../SubChildren/Quotes";
 import { useTimes } from "../Contexts/PomodoroSettings";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  Reducer,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import { useMusicPlayer } from "../Contexts/MusicHandler";
 import { usePhotos } from "../Contexts/PicturesHandler";
+import { useStorage } from "../Contexts/StorageHandler";
 
-type times = "longBreak" | "shortBreak" | "focus";
+export type times = "longBreak" | "shortBreak" | "focus";
 type task = {
   id: number;
   task: string;
   status: "Complete" | "Incomplete";
 };
-export type taskData = {
-  day: string;
-  tasks: number;
+type State = {
+  action: "null" | "add" | "subtract";
 };
-export type timeData = {
-  day: string;
-  timeInHrs: number;
+type Action = {
+  type: "null" | "add" | "subtract";
 };
-// type currentTime = {
-//   type: times;
-//   minutes: number;
-//   seconds: number;
-//   paused: boolean;
-// };
 
 export const dayValue = (): string => {
   switch (new Date().getDay()) {
@@ -45,20 +45,58 @@ export const dayValue = (): string => {
       return "Invalid";
   }
 };
+const reducer: Reducer<State, Action> = (state, action) => {
+  switch (action.type) {
+    case "add":
+      return {
+        action: "add",
+      };
+    case "subtract":
+      return {
+        action: "subtract",
+      };
+    default:
+      return state;
+  }
+};
 
 const Timer = (): React.ReactNode => {
+  //local storage
+  const {
+    activeTasksHandler,
+    presentTasks,
+    timer,
+    activeTimeHandler,
+    summaryTasks,
+    summaryTHandler,
+  } = useStorage();
   //Time
+
   const [currentTimeOption, setCurrent] = useState<times>("focus"),
     { defaults } = useTimes(),
     changeTimeOption = () => {
       if (currentTimeOption == "focus") setCurrent("longBreak");
       else if (currentTimeOption == "longBreak") setCurrent("shortBreak");
       else setCurrent("focus");
+
+      activeTimeHandler({
+        type: currentTimeOption,
+        minutes: defaults[currentTimeOption],
+        seconds: 0,
+        paused: pause,
+      });
     },
     resetTimeOption = () => {
       setPause(true);
       setMinutes(defaults[currentTimeOption]);
       setSeconds(0);
+
+      activeTimeHandler({
+        type: currentTimeOption,
+        minutes: defaults[currentTimeOption],
+        seconds: 0,
+        paused: pause,
+      });
     };
 
   const [minutes, setMinutes] = useState<number>(defaults[currentTimeOption]),
@@ -66,7 +104,21 @@ const Timer = (): React.ReactNode => {
     [pause, setPause] = useState<boolean>(true);
 
   useEffect(() => {
+    if (timer != null) {
+      setCurrent(timer.type);
+      setMinutes(timer.minutes);
+      setSeconds(timer.seconds);
+      setPause(timer.paused);
+    }
+  }, []);
+  useEffect(() => {
     setMinutes(defaults[currentTimeOption]);
+    activeTimeHandler({
+      type: currentTimeOption,
+      minutes: defaults[currentTimeOption],
+      seconds: seconds,
+      paused: pause,
+    });
   }, [currentTimeOption, defaults]);
   useEffect(() => {
     const timeInterval: NodeJS.Timeout = setInterval(() => {
@@ -78,6 +130,12 @@ const Timer = (): React.ReactNode => {
         }
         if (minutes == 0 && seconds == 0) clearInterval(timeInterval);
       }
+      activeTimeHandler({
+        type: currentTimeOption,
+        minutes: minutes,
+        seconds: seconds,
+        paused: pause,
+      });
     }, 1000);
 
     return () => {
@@ -89,7 +147,15 @@ const Timer = (): React.ReactNode => {
   const [tasks, setTasks] = useState<task[]>([]),
     [input, setInput] = useState<string>(""),
     taskRef = useRef<HTMLInputElement | null>(null),
-    [taskCount, setCount] = useState<number>(tasks.length);
+    [taskCount, setCount] = useState<number>(tasks.length),
+    [state, dispatch] = useReducer(reducer, {
+      action: "null",
+    });
+
+  // --> Get any present
+  useEffect(() => {
+    if (presentTasks.length > 0) setTasks(presentTasks);
+  }, []);
 
   const taskHandler = () => {
       if (input != "") {
@@ -102,6 +168,7 @@ const Timer = (): React.ReactNode => {
             status: "Incomplete",
           },
         ]);
+
         setInput("");
       } else {
         if (taskRef.current)
@@ -138,64 +205,48 @@ const Timer = (): React.ReactNode => {
       );
     };
 
+  // --> Update local storage
   useEffect(() => {
-    setCount(tasks.length);
+    activeTasksHandler(tasks);
   }, [tasks]);
-
-  // --> local storage, present tasks
+  // --> Update summary
   useEffect(() => {
-    let presentTasks = window.localStorage.getItem("PresentTasks");
-    if (presentTasks == null)
-      window.localStorage.setItem("PresentTasks", JSON.stringify(tasks));
-  }, [tasks]);
-
-  //Local storage
-  const [tasksdone, setDone] = useState<taskData[]>([]),
-    [finishedTasks, setCounter] = useState<number>(0);
-  // --> Get any data present
-  useEffect(() => {
-    let taskGetter = window.localStorage.getItem("TasksDone"),
-      presentTasks = window.localStorage.getItem("PresentTasks");
-
-    if (taskGetter != null) setDone(JSON.parse(taskGetter) as taskData[]);
-
-    if (presentTasks != null)
-      if ((JSON.parse(presentTasks) as task[]).length != 0)
-        setTasks(JSON.parse(presentTasks));
-  }, []);
-  useEffect(() => {
-    setCounter(tasks.filter((task) => task.status == "Complete").length);
-  }, [tasks, finishedTasks]);
-  // --> Update summary data in total
-  useEffect(() => {
-    //Present Tasks and total tasks done
-    if (tasksdone.length == 0) {
-      setDone([
+    if (summaryTasks.length == 0) {
+      summaryTHandler([
         {
-          day: dayValue(),
-          tasks: tasks.filter((task) => task.status == "Complete").length,
+          Day: dayValue(),
+          taskCount: 0,
         },
       ]);
     } else {
-      let finder = tasksdone.find((days) => days.day == dayValue());
-      if (finder) {
-        setDone(
-          tasksdone.map((days) => {
-            if (days.day == finder.day) {
+      let dayFinder = summaryTasks.find((Day) => Day.Day == dayValue());
+
+      if (dayFinder)
+        summaryTHandler((current) =>
+          current.map((Day) => {
+            if (Day.Day == dayValue())
               return {
-                day: finder.day,
-                tasks: finishedTasks,
+                ...Day,
+                taskCount:
+                  state.action == "add"
+                    ? Day.taskCount + 1
+                    : state.action == "subtract"
+                    ? Day.taskCount - 1
+                    : Day.taskCount,
               };
-            } else {
-              return days;
-            }
+            else return Day;
           })
         );
-      }
+      else
+        summaryTHandler((current) => [
+          ...current,
+          {
+            Day: dayValue(),
+            taskCount: tasks.filter((task) => task.status == "Complete").length,
+          },
+        ]);
     }
-    window.localStorage.setItem("TasksDone", JSON.stringify(tasksdone));
-    window.localStorage.setItem("PresentTasks", JSON.stringify(tasks));
-  }, [tasks, minutes]);
+  }, [tasks]);
 
   //Music Handler
   const {
@@ -219,6 +270,7 @@ const Timer = (): React.ReactNode => {
       timeHandler(0);
     }
   };
+
   //Photos
   const photos = usePhotos(),
     photo = photos?.photos[5];
