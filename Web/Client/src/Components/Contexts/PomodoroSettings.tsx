@@ -6,7 +6,7 @@ import {
   useState,
 } from "react";
 
-type times = {
+export type times = {
   focus: number;
   longBreak: number;
   shortBreak: number;
@@ -28,7 +28,6 @@ const Times = createContext<settings>({
 
 export const useTimes = () => {
   const { defaults, setSettings } = useContext(Times);
-
   return { defaults, setSettings };
 };
 

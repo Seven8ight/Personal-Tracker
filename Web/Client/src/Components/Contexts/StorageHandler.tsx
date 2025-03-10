@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import { times } from "../Tabs/Timer";
+import { times as settings, useTimes } from "./PomodoroSettings";
 
 export type timer = {
   type: times;
@@ -31,6 +32,8 @@ type data = {
   activeTimeHandler: Dispatch<SetStateAction<timer>>;
   backgroundId: number | null;
   backgroundHandler: Dispatch<SetStateAction<number | null>>;
+  pomoSettings: settings;
+  setPomoSettings: Dispatch<SetStateAction<settings>>;
 };
 type dayTasks = {
   Day: string;
@@ -57,6 +60,12 @@ const Storage = createContext<data>({
   activeTimeHandler: () => {},
   backgroundId: 1,
   backgroundHandler: () => {},
+  pomoSettings: {
+    focus: 45,
+    shortBreak: 5,
+    longBreak: 20,
+  },
+  setPomoSettings: () => {},
 });
 
 export const useStorage = () => {
@@ -71,6 +80,8 @@ export const useStorage = () => {
     activeTimeHandler,
     backgroundId,
     backgroundHandler,
+    pomoSettings,
+    setPomoSettings,
   } = useContext(Storage);
 
   return {
@@ -84,6 +95,8 @@ export const useStorage = () => {
     activeTimeHandler,
     backgroundId,
     backgroundHandler,
+    pomoSettings,
+    setPomoSettings,
   };
 };
 
@@ -92,19 +105,23 @@ const StorageHandler = ({
 }: {
   children: React.ReactNode;
 }): React.ReactNode => {
-  //Current tasks
+  //Current tasks and Background
   const [tasks, setTasks] = useState<task[]>([]),
     [timer, setTimer] = useState<timer | null>(null),
     [backgroundId, setBId] = useState<number | null>(null);
   //Summary Data
   const [DayTasks, setDTasks] = useState<dayTasks[]>([]),
     [DayTimes, setTimes] = useState<timeTaken[]>([]);
+  //Pomodoro Settings
+  const { defaults, setSettings } = useTimes(),
+    [settings, setPomoSettings] = useState<settings>(defaults);
 
   const presentTasks = localStorage.getItem("Present Tasks"),
     presentTime = localStorage.getItem("Present Time"),
     summaryTasks = localStorage.getItem("Summary Tasks"),
     summaryTime = localStorage.getItem("Summary Time"),
-    localbackgroundId = localStorage.getItem("Background Id");
+    localbackgroundId = localStorage.getItem("Background Id"),
+    pomoSettings = localStorage.getItem("Pomodoro Settings");
 
   //Getter
   useEffect(() => {
@@ -113,9 +130,9 @@ const StorageHandler = ({
     if (presentTime != null) setTimer(JSON.parse(presentTime));
     if (summaryTime != null) setTimes(JSON.parse(summaryTime));
     if (summaryTasks != null) setDTasks(JSON.parse(summaryTasks));
+    if (pomoSettings != null) setPomoSettings(JSON.parse(pomoSettings));
   }, []);
-
-  //Setter -- first time joining
+  //Setter -- first time joining, and balancing
   useEffect(() => {
     if (typeof backgroundId == "number")
       window.localStorage.setItem("Background Id", backgroundId.toString());
@@ -135,7 +152,17 @@ const StorageHandler = ({
     if (summaryTime == null)
       window.localStorage.setItem("Summary Time", JSON.stringify([]));
     else window.localStorage.setItem("Summary Time", JSON.stringify(DayTimes));
-  }, [backgroundId, tasks, timer, DayTasks, DayTimes]);
+
+    if (pomoSettings == null)
+      window.localStorage.setItem("Pomodoro Settings", JSON.stringify({}));
+    else {
+      window.localStorage.setItem(
+        "Pomodoro Settings",
+        JSON.stringify(settings)
+      );
+      setSettings(settings);
+    }
+  }, [backgroundId, tasks, timer, DayTasks, DayTimes, settings]);
 
   return (
     <Storage.Provider
@@ -150,6 +177,8 @@ const StorageHandler = ({
         activeTimeHandler: setTimer as Dispatch<SetStateAction<timer>>,
         backgroundId: backgroundId,
         backgroundHandler: setBId,
+        pomoSettings: settings,
+        setPomoSettings: setPomoSettings,
       }}
     >
       {children}
