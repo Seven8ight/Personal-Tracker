@@ -8,6 +8,7 @@ Currently features:
 4. Small variety of backgrounds to choose from
 5. Data visualization on performance based on tasks completed on various days of the week and time taken in focus
 6. Account creation that's in session
+7. Recording of voice notes, storage for this is not clearly implemented, to be implemented soon enough
 
 For forking purposes, simply
 
