@@ -52,6 +52,7 @@ const Music = (): React.ReactNode => {
             onClick={(event) => {
               event.stopPropagation();
               indexHandler(musicIndex);
+              playHandler(true);
             }}
           >
             <i className="fa-solid fa-play"></i>
