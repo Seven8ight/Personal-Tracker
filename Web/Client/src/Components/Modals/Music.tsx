@@ -60,6 +60,18 @@ const Music = (): React.ReactNode => {
         );
       }
     },
+    formatString = (input: string): string => {
+      let fileName = input.substring(input.lastIndexOf("/") + 1),
+        omittedDashes = fileName.replace(/_/g, " "),
+        words = omittedDashes.split(" "),
+        titleCaseConverter = words.map((word) => {
+          if (word.length > 0)
+            return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+          return word;
+        }),
+        formattedString = titleCaseConverter.join(" ").replace(/\.[^/.]+$/, "");
+      return formattedString;
+    },
     deletionHandler = (id: number) => {
       musicContainerHandler((current) =>
         current.filter((_, index) => index != id)
@@ -166,7 +178,7 @@ const Music = (): React.ReactNode => {
         {musicContainer.map((music, index) => {
           return (
             <div id={`music-${index}`} key={index}>
-              <p>{music.split("/")[4].replace(/_/g, " ").split(".")[0]}</p>
+              <p>{formatString(music)}</p>
               <div id="commands">
                 <CurrentlyPlaying musicIndex={index} musicName={music} />
                 <button onClick={() => deletionHandler(index)}>
