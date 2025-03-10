@@ -13,6 +13,7 @@
     "@tailwindcss/vite": "^4.0.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cross-fetch": "^4.1.0",
     "lucide-react": "^0.476.0",
     "motion": "^12.4.7",
     "pexels": "^1.4.0",
@@ -24,7 +25,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
-    "@rollup/plugin-commonjs": "^28.0.3",
     "@types/node": "^22.13.5",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
