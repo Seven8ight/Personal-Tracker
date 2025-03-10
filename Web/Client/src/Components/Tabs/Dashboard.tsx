@@ -240,12 +240,11 @@ const Dashboard = (): React.ReactNode => {
       if (action == "Next") {
         if (index + 1 == total) indexHandler(0);
         else indexHandler((current) => current + 1);
-        timeHandler(0);
       } else {
         if (index - 1 < 0) indexHandler(total - 1);
         else indexHandler((current) => current - 1);
-        timeHandler(0);
       }
+      timeHandler(0);
     },
     musicShuffler = (): void => {
       playHandler(false);
