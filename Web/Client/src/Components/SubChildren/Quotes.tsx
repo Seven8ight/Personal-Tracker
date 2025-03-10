@@ -1,4 +1,5 @@
-import { memo, useEffect, useState } from "react";
+import { memo, Suspense, useEffect, useState } from "react";
+import Loading from "../Popups/Loading";
 
 type quote = {
   text: string;
@@ -33,16 +34,18 @@ const Quotes = (): React.ReactNode => {
   }, []);
 
   return (
-    <div id="quotes">
-      {fetchedquote[randomNumber] && (
-        <>
-          <p>{fetchedquote[randomNumber].text}</p>
-          <p>
-            <u>{fetchedquote[randomNumber].author}</u>
-          </p>
-        </>
-      )}
-    </div>
+    <Suspense fallback={<Loading />}>
+      <div id="quotes">
+        {fetchedquote[randomNumber] && (
+          <>
+            <p>{fetchedquote[randomNumber].text}</p>
+            <p>
+              <u>{fetchedquote[randomNumber].author}</u>
+            </p>
+          </>
+        )}
+      </div>
+    </Suspense>
   );
 };
 
