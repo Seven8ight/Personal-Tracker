@@ -1,50 +1,37 @@
-# React + TypeScript + Vite
+# Web Version of Personal Tracker application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Currently features:
 
-Currently, two official plugins are available:
+1. Adjustable Pomodoro Timer
+2. Music and soon to come, custom insertion of music
+3. Task insertion and storage
+4. Small variety of backgrounds to choose from
+5. Data visualization on performance based on tasks completed on various days of the week and time taken in focus
+6. Account creation that's in session
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+For forking purposes, simply
 
-## Expanding the ESLint configuration
+- Fork and clone the project.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+To run
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm run dev
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+# Bugs Present
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+1. Music handler in the modal currently skips the clicked audio music heading for the previous one.
+2. Storage means of the current time lapsed in the pomo timer is faulty, make sure to stay in the pomo tab in order to retain the time taken for tracking of performance.
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+# Extra tips
+
+Since the application will be replicated in mobile devices, responsiveness has been ignored on smaller devices but will be added later on and animations as well shall be added.
+
+# Disclaimer
+
+This project contains images and music elements that belong to their respective owners
+Images originate from pexels.com
+Music is downloaded from chosic.com
+
+- They all belong to their respective owners.
