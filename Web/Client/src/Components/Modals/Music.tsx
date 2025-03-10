@@ -69,8 +69,14 @@ const Music = (): React.ReactNode => {
             return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
           return word;
         }),
-        formattedString = titleCaseConverter.join(" ").replace(/\.[^/.]+$/, "");
-      return formattedString;
+        formattedString = titleCaseConverter.join(" ").replace(/\.[^/.]+$/, ""),
+        finalString = formattedString.slice(
+          0,
+          formattedString.indexOf("-")
+            ? formattedString.indexOf("-")
+            : formattedString.length
+        );
+      return finalString;
     },
     deletionHandler = (id: number) => {
       musicContainerHandler((current) =>
