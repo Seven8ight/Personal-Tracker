@@ -6,7 +6,7 @@ import Account from "./Components/Modals/Account";
 import { useTabSwitcher } from "./Components/Contexts/TabSwitcher";
 import { useModalOpener } from "./Components/Contexts/ModalHandler";
 import Music from "./Components/Modals/Music";
-import Settings from "./Components/Modals/Settings ";
+import Settings from "./Components/Modals/Settings";
 import { useEffect } from "react";
 
 const App = (): React.ReactNode => {
