@@ -132,15 +132,12 @@ const Dashboard = (): React.ReactNode => {
             };
 
             mediaRecorder.onstop = () => {
-              console.log(audioCapture);
               const audioFile: Blob = new Blob(audioCapture, {
                   type: "audio/mp4",
                 }),
                 audioReader: FileReader = new FileReader();
 
               audioReader.onloadend = () => {
-                console.log(audioReader.result);
-
                 const audioBaseSrc = audioReader.result as string;
 
                 setTapes((tapes) => [
