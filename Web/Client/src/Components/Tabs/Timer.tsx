@@ -45,7 +45,7 @@ export const dayValue = (): string => {
       return "Invalid";
   }
 };
-const reducer: Reducer<State, Action> = (state, action) => {
+const reducer: Reducer<State, Action> = (_, action) => {
   switch (action.type) {
     case "add":
       return {
@@ -56,7 +56,9 @@ const reducer: Reducer<State, Action> = (state, action) => {
         action: "subtract",
       };
     default:
-      return state;
+      return {
+        action: "null",
+      };
   }
 };
 
@@ -69,6 +71,8 @@ const Timer = (): React.ReactNode => {
     activeTimeHandler,
     summaryTasks,
     summaryTHandler,
+    summaryTimes,
+    summaryTimeHandler,
   } = useStorage();
   //Time
 
@@ -98,13 +102,18 @@ const Timer = (): React.ReactNode => {
         paused: pause,
       });
     };
-
   const [minutes, setMinutes] = useState<number>(defaults[currentTimeOption]),
     [seconds, setSeconds] = useState<number>(0),
-    [pause, setPause] = useState<boolean>(true);
+    [pause, setPause] = useState<boolean>(true),
+    initialTime = useRef<boolean>(true);
 
   useEffect(() => {
-    if (timer != null) {
+    if (
+      timer != null &&
+      timer.type != null &&
+      timer.minutes != null &&
+      timer.seconds != null
+    ) {
       setCurrent(timer.type);
       setMinutes(timer.minutes);
       setSeconds(timer.seconds);
@@ -112,14 +121,18 @@ const Timer = (): React.ReactNode => {
     }
   }, []);
   useEffect(() => {
-    setMinutes(defaults[currentTimeOption]);
-    activeTimeHandler({
-      type: currentTimeOption,
-      minutes: defaults[currentTimeOption],
-      seconds: seconds,
-      paused: pause,
-    });
+    if (initialTime.current == false) {
+      setMinutes(defaults[currentTimeOption]);
+      setSeconds(0);
+      activeTimeHandler({
+        type: currentTimeOption,
+        minutes: defaults[currentTimeOption],
+        seconds: seconds,
+        paused: pause,
+      });
+    }
   }, [currentTimeOption, defaults]);
+  // --> Timer function
   useEffect(() => {
     const timeInterval: NodeJS.Timeout = setInterval(() => {
       if (pause == false) {
@@ -128,20 +141,63 @@ const Timer = (): React.ReactNode => {
           setSeconds(59);
           setMinutes((minutes) => minutes - 1);
         }
-        if (minutes == 0 && seconds == 0) clearInterval(timeInterval);
       }
-      activeTimeHandler({
-        type: currentTimeOption,
-        minutes: minutes,
-        seconds: seconds,
-        paused: pause,
-      });
+      if ((minutes < 0 || minutes == 0) && (seconds < 0 || seconds == 0)) {
+        clearInterval(timeInterval);
+        setPause(true);
+        setMinutes(0);
+        setSeconds(0);
+        return;
+      }
+      if (initialTime.current == false) {
+        activeTimeHandler({
+          type: currentTimeOption,
+          minutes: minutes,
+          seconds: seconds,
+          paused: pause,
+        });
+      }
     }, 1000);
 
     return () => {
       clearInterval(timeInterval);
     };
   }, [minutes, seconds, pause]);
+  // --> Update summary of times to add day summary
+  useEffect(() => {
+    if (summaryTimes) {
+      let dayFinder = summaryTimes.find((Day) => Day.Day == dayValue());
+      if (dayFinder) return;
+      else
+        summaryTimeHandler([
+          {
+            Day: dayValue(),
+            timeInhours: 0,
+          },
+        ]);
+    }
+  }, []);
+  // --> update summary of the day
+  useEffect(() => {
+    if (!pause) {
+      if (currentTimeOption == "focus") {
+        let dayFinder = summaryTimes.find((Day) => Day.Day == dayValue());
+        if (dayFinder) {
+          summaryTimeHandler(
+            summaryTimes.map((Day) => {
+              if (Day.Day == dayValue()) {
+                return {
+                  ...Day,
+                  timeInhours: Day.timeInhours + Math.floor(minutes / 60),
+                };
+              } else return Day;
+            })
+          );
+        }
+      }
+    }
+    initialTime.current = false;
+  }, [minutes, pause]);
 
   //Tasks
   const [tasks, setTasks] = useState<task[]>([]),
@@ -179,6 +235,9 @@ const Timer = (): React.ReactNode => {
       setTasks((current) =>
         current.map((task) => {
           if (task.id == taskId) {
+            dispatch({
+              type: task.status == "Complete" ? "subtract" : "add",
+            });
             return {
               ...task,
               id: task.id,
@@ -190,8 +249,11 @@ const Timer = (): React.ReactNode => {
       );
     },
     deleteTask = (taskId: number) => {
-      setTasks((current) =>
-        current
+      dispatch({
+        type: "null",
+      });
+      setTasks((current) => {
+        return current
           .filter((task) => task.id != taskId)
           .map((task) => {
             if (taskId > task.id) return task;
@@ -201,8 +263,8 @@ const Timer = (): React.ReactNode => {
                 task: task.task,
                 status: task.status,
               };
-          })
-      );
+          });
+      });
     };
 
   // --> Update local storage
@@ -246,6 +308,9 @@ const Timer = (): React.ReactNode => {
           },
         ]);
     }
+  }, [tasks, state]);
+  useEffect(() => {
+    dispatch({ type: "null" });
   }, [tasks]);
 
   //Music Handler

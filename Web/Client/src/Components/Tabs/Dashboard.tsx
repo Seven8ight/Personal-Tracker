@@ -3,9 +3,10 @@ import { ChartContainer, ChartConfig } from "../ui/chart";
 import { Bar, BarChart, XAxis } from "recharts";
 import { useMusicPlayer } from "../Contexts/MusicHandler";
 import { usePhotos } from "../Contexts/PicturesHandler";
-import { backgrounds } from "../Modals/Settings ";
+import { backgrounds } from "../Modals/Settings";
 import Error from "../Popups/Error";
 import { useStorage } from "../Contexts/StorageHandler";
+import { dayValue } from "./Timer";
 
 type audio = {
   id: number;
@@ -21,15 +22,15 @@ type chartData = {
 
 const Dashboard = (): React.ReactNode => {
   //Summary
-  const chartData: chartData[] = [
-      { day: "Monday", tasks: 186, hours: 80 },
-      { day: "Tuesday", tasks: 305, hours: 200 },
-      { day: "Wednesday", tasks: 237, hours: 120 },
-      { day: "Thursday", tasks: 73, hours: 190 },
-      { day: "Friday", tasks: 209, hours: 130 },
-      { day: "Saturday", tasks: 214, hours: 140 },
-      { day: "Sunday", tasks: 150, hours: 70 },
-    ],
+  const [chartData, setChartData] = useState<chartData[]>([
+      { day: "Monday", tasks: 0, hours: 0 },
+      { day: "Tuesday", tasks: 0, hours: 0 },
+      { day: "Wednesday", tasks: 0, hours: 0 },
+      { day: "Thursday", tasks: 0, hours: 0 },
+      { day: "Friday", tasks: 0, hours: 0 },
+      { day: "Saturday", tasks: 0, hours: 0 },
+      { day: "Sunday", tasks: 0, hours: 0 },
+    ]),
     chartConfig = {
       tasks: {
         label: "tasks",
@@ -69,17 +70,32 @@ const Dashboard = (): React.ReactNode => {
   }, [backgroundId]);
 
   useEffect(() => {
-    setCount(
-      summaryTasks.reduce(
-        (accumulator, currValue) => accumulator + currValue.taskCount,
-        0
-      )
-    );
-    setTCount(
-      summaryTimes.reduce(
-        (accumulator, currValue) => accumulator + currValue.timeInhours,
-        0
-      )
+    let currentTaskDayFinder = summaryTasks.find(
+        (Day) => Day.Day == dayValue()
+      ),
+      currentTimeDayFinder = summaryTimes.find((Day) => Day.Day == dayValue());
+
+    if (currentTaskDayFinder) setCount(currentTaskDayFinder.taskCount);
+    if (currentTimeDayFinder) setTCount(currentTimeDayFinder.timeInhours);
+  }, [summaryTasks, summaryTimes]);
+
+  useEffect(() => {
+    setChartData(
+      chartData.map((chartDay) => {
+        let dayTasksFinder = summaryTasks.find(
+            (Day) => Day.Day == chartDay.day
+          ),
+          dayTimesFinder = summaryTimes.find((Day) => Day.Day == chartDay.day);
+
+        if (dayTasksFinder || dayTimesFinder) {
+          return {
+            ...chartDay,
+            tasks: dayTasksFinder?.taskCount || 0,
+            hours: dayTimesFinder?.timeInhours || 0,
+          };
+        }
+        return chartDay;
+      })
     );
   }, [summaryTasks, summaryTimes]);
 
