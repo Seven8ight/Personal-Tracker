@@ -311,7 +311,10 @@ const Dashboard = (): React.ReactNode => {
         <h1>Audio Recordings</h1>
         <audio src="#"></audio>
         <div id="records">
-          <p>Provide notes in form of audio recordings</p>
+          <p>
+            Provide notes in form of audio recordings, Experimental, works but
+            audio's aren't saved at the moment.
+          </p>
           <div id="addRecord">
             <input
               value={clipName}
