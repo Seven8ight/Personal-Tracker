@@ -9,7 +9,6 @@ const Timer = (): React.ReactNode => {
           flex: 1,
           borderRadius: 10,
           padding: 10,
-
           justifyContent: "center",
           alignItems: "center",
         }}

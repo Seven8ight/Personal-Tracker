@@ -42,7 +42,9 @@
         "expo-font",
         {
           "fonts": [
-            "node_modules/@expo-google-fonts/inter/Inter_900Black.ttf"
+            "node_modules/@expo-google-fonts/inter/Inter_900Black.ttf",
+            "node_modules/@expo-google-fonts/lobster/Lobster_400Regular.ttf",
+            "node_modules/@expo-google-fonts/lobster-two/LobsterTwo_400Regular.ttf"
           ]
         }
       ]
