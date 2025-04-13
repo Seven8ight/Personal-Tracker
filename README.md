@@ -13,3 +13,5 @@ Comes with various built in features e.g.
 3.  Account creating and session management
 
 4.  Server side authentication and storage management
+
+__Put on hold for a moment, redesigning in progress__
